@@ -7,11 +7,9 @@ module.exports.initialize = async function () {
             'firstName VARCHAR(50) NOT NULL, ' +
             'middleName VARCHAR(50), ' +
             'lastName VARCHAR(50) NOT NULL, ' +
-            'idNumber VARCHAR(50) NOT NULL, ' +
             'email VARCHAR(50) NOT NULL UNIQUE, ' +
             'phoneNumber VARCHAR(10) NOT NULL, ' +
             'address VARCHAR(50), ' +
-            'addressCode VARCHAR(50), ' +
             'city VARCHAR(50), ' +
             'role INT NOT NULL DEFAULT 3, ' +
             'password VARCHAR(255) NOT NULL, ' +
