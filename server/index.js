@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-// const connect = require('./config/db/db_initialize');
+// const connect = require('./config/db/db_initialize').initialize();
 
 app.use('/api/user', require('./routes/user'));
 app.use('/api/course', require('./routes/course'));

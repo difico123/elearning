@@ -24,7 +24,7 @@ router.post(
         }),
     ],
     validateInput,
-    ApiUser.resgister,
+    ApiUser.register,
 );
 
 // @route   POST api/user/login

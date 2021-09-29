@@ -6,7 +6,7 @@ module.exports = class ApiUser {
     // @route   POST api/user/register
     // @desc    Register user
     // @access  Public
-    static async resgister(req, res) {
+    static async register(req, res) {
         try {
             let { email } = req.body;
 
