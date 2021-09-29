@@ -6,7 +6,7 @@ const { check } = require('express-validator');
 const ApiCourse = require('../controllers/ApiCourse');
 const validateInput = require('../middleware/errors/validateInput');
 
-// @route   POST api/courses/create
+// @route   POST api/course/create
 // @desc    Create course
 // @access  Private
 router.post(
@@ -16,6 +16,16 @@ router.post(
     instructorAuth,
     validateInput,
     ApiCourse.createCourse,
+);
+
+// @route   PUT api/course/activate
+// @desc    Activate course
+// @access  Private
+router.put(
+    '/activateCourse',
+    auth,
+    instructorAuth,
+    ApiCourse.activateCourse,
 );
 
 module.exports = router;

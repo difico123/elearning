@@ -16,4 +16,35 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
+
+    static async updateCourse(course) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'UPDATE courses SET ? WHERE id = ?';
+
+                pool.query(query, [course,course.id], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result.affectedRows);
+                });
+            });
+            return response === 1 ? true : false;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    static async activateCourse(course) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'UPDATE courses SET ? WHERE id = ?';
+
+                pool.query(query, [course,course.id], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result.affectedRows);
+                });
+            });
+            return response === 1 ? true : false;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

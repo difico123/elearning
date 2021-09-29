@@ -35,16 +35,14 @@ module.exports = class ApiUser {
                             res.status(200).send(
                                 'Đăng kí tài khoản thành công',
                             );
-                        })
-                        .catch((err) => console.log(err));
-                })
-                .catch((err) => console.log(err));
+                        });
+                });
         } catch (error) {
             res.status(500).send('server error ' + error.message);
         }
     }
 
-    // @route   POST api/users/login
+    // @route   POST api/user/login
     // @desc    login user
     // @access  Public
     static async login(req, res) {
@@ -128,6 +126,8 @@ module.exports = class ApiUser {
 
                 const user = req.body;
                 user.id = id;
+
+                
                 UserService.getUserByEmail(user.email).then((data) => {
                     if (data[0]) {
                         return res.status(400).json({
@@ -151,7 +151,7 @@ module.exports = class ApiUser {
         }
     }
 
-    // @route   DELETE api/user/delete
+    // @route   DELETE api/users/delete
     // @desc    Delete user by admin
     // @access  Private
     static async deleteUser(req, res) {
@@ -166,6 +166,30 @@ module.exports = class ApiUser {
                 }
                 res.status(200).send('Đã xoá user ');
             });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+    // @route   PUT api/user/beAnIntructor
+    // @desc    to be an beIntructor
+    // @access  Private
+    static async beAnIntructor(req, res) {
+        try {
+            //get user information by id
+            UserService.getUserInfoById(req.user.id).then((data) => {
+                data[0].role = 1;
+
+                UserService.updateUserInfo(data[0]).then((updated) => {
+                    if (!updated) {
+                        return res.status(400).json({
+                            error: 'Bạn chưa trở thành instructor',
+                        });
+                    }
+                    res.status(200).send('Bạn đã trở thành instructor');
+                });
+            })
+            
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');

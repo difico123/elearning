@@ -51,57 +51,10 @@ module.exports = class UserService {
 
     static async updateUserInfo(user) {
         try {
-            const {
-                id,
-                firstName,
-                middleName,
-                lastName,
-                email,
-                phoneNumber,
-                address,
-                city,
-            } = user;
             const response = await new Promise((resolve, reject) => {
-                //check if email exists
-                let firstToken =
-                    'UPDATE users SET ' +
-                    'firstName = ?,' +
-                    'middleName = ?,' +
-                    'lastName = ?,';
-
-                let secondToken =
-                    'phoneNumber = ?,' +
-                    'address = ?,' +
-                    'city = ?' +
-                    'WHERE id = ?';
-                let query = '';
-                let questionMark = [];
-                const emailString = 'email = ?,';
-                if (email) {
-                    query += firstToken + emailString + secondToken;
-                    questionMark = [
-                        firstName,
-                        middleName,
-                        lastName,
-                        email,
-                        phoneNumber,
-                        address,
-                        city,
-                        id,
-                    ];
-                } else {
-                    query += firstToken + secondToken;
-                    questionMark = [
-                        firstName,
-                        middleName,
-                        lastName,
-                        phoneNumber,
-                        address,
-                        city,
-                        id,
-                    ];
-                }
-                pool.query(query, questionMark, (err, result) => {
+                
+                let query = 'UPDATE users SET ? WHERE id = ?'
+                pool.query(query, [user,user.id], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result.affectedRows);
                 });
