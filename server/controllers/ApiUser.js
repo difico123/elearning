@@ -1,4 +1,3 @@
-const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs'); // encrypt password
 const UserService = require('../dbservice/UserService');
 const jwt = require('jsonwebtoken');
@@ -8,13 +7,6 @@ module.exports = class ApiUser {
     // @desc    Register user
     // @access  Public
     static async resgister(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                error: errors.errors.map((item) => item.msg),
-            });
-        }
-
         try {
             let { email } = req.body;
 
@@ -35,10 +27,10 @@ module.exports = class ApiUser {
 
                     UserService.addUser(user)
                         .then((created) => {
-                            if(!created) {
-                               return res.status(400).send(
-                                    'Chưa đăng kí được tài khoản',
-                                );
+                            if (!created) {
+                                return res
+                                    .status(400)
+                                    .send('Chưa đăng kí được tài khoản');
                             }
                             res.status(200).send(
                                 'Đăng kí tài khoản thành công',
@@ -56,14 +48,7 @@ module.exports = class ApiUser {
     // @desc    login user
     // @access  Public
     static async login(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                error: errors.errors.map((item) => item.msg),
-            });
-        }
         let { email, password } = req.body;
-
         //find user
         UserService.getUserByEmail(email)
             .then(async (data) => {
@@ -141,22 +126,23 @@ module.exports = class ApiUser {
                         .json({ error: 'Không tìm thấy user' });
                 }
 
-                const errors = validationResult(req);
-                if (!errors.isEmpty()) {
-                    return res.status(400).json({
-                        error: errors.errors.map((item) => item.msg),
-                    });
-                }
-
                 const user = req.body;
                 user.id = id;
-                UserService.updateUserInfo(user).then((updated) => {
-                    if (!updated) {
+                UserService.getUserByEmail(user.email).then((data) => {
+                    if (data[0]) {
                         return res.status(400).json({
-                            error: 'Không sửa được thông tin của bạn ',
+                            error: 'Email này đã có người đăng kí',
                         });
                     }
-                    res.status(200).send('Đã sửa thông tin của bạn ');
+
+                    UserService.updateUserInfo(user).then((updated) => {
+                        if (!updated) {
+                            return res.status(400).json({
+                                error: 'Không sửa được thông tin của bạn ',
+                            });
+                        }
+                        res.status(200).send('Đã sửa thông tin của bạn ');
+                    });
                 });
             });
         } catch (error) {

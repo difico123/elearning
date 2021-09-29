@@ -1,16 +1,17 @@
-const UserService = require('../dbservice/UserService');
+const UserService = require('../../dbservice/UserService');
 
 module.exports = async function (req, res, next) {
     try {
         // Get user information by Id
-        // User.role = 1 (instructor)
+        // User.role = 2 (admin)
         UserService.getUserInfoById(req.user.id).then((data) => {
-            if (data[0].role !== 2 && data[0].role !== 1) {
+            if (data[0].role !== 2) {
                 return res.status(403).json({
-                    error: 'Instructor resources access denied',
+                    error: 'Admin resources access denied',
                 });
             }
-            next(); 
+
+            next();
         });
     } catch (error) {
         console.log(error.message);

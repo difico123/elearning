@@ -1,7 +1,6 @@
 const pool = require('../config/db/db');
 
 module.exports = class CourseService {
-
     static async addCourse(course) {
         try {
             const response = await new Promise((resolve, reject) => {

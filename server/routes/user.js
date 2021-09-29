@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
 const ApiUser = require('../controllers/ApiUser');
-const auth = require('../middleware/auth');
-const admin = require('../middleware/admin.auth');
+const auth = require('../middleware/auth/auth');
+const admin = require('../middleware/auth/admin.auth');
+const validateInput = require('../middleware/errors/validateInput');
 
 // @route   GET apis/user
 // @desc    User information
@@ -22,6 +23,7 @@ router.post(
             min: 6,
         }),
     ],
+    validateInput,
     ApiUser.resgister,
 );
 
@@ -36,6 +38,7 @@ router.post(
             min: 6,
         }),
     ],
+    validateInput,
     ApiUser.login,
 );
 
@@ -50,6 +53,7 @@ router.put(
         check('email', 'Địa chỉ email không hợp lệ').isEmail(),
     ],
     auth,
+    validateInput,
     ApiUser.editInfo,
 );
 
