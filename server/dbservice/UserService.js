@@ -19,15 +19,15 @@ module.exports = class UserService {
 
     static async addUser(user) {
         try {
-            const respond = await new Promise((resolve, reject) => {
+            const response = await new Promise((resolve, reject) => {
                 const query = 'INSERT INTO users SET ? ';
 
                 pool.query(query, [user], (err, result) => {
                     if (err) reject(new Error(err.message));
-                    resolve(result);
+                    resolve(result.affectedRows);
                 });
             });
-            return respond;
+            return response === 1 ? true : false;
         } catch (error) {
             console.log(error);
         }

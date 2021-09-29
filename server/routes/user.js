@@ -5,16 +5,16 @@ const ApiUser = require('../controllers/ApiUser');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin.auth');
 
-// @route   POST api/user
+// @route   GET apis/user
 // @desc    User information
 // @access  Private
 router.get('/info', auth, ApiUser.getInfor);
 
-// @route   POST api/user/register
+// @route   POST api/users/register
 // @desc    Register user
 // @access  Public
 router.post(
-    '/resgister',
+    '/register',
     [
         check('lastName', 'Không được bỏ trống tên').not().isEmpty(),
         check('email', 'Địa chỉ email không hợp lệ').isEmail(),
@@ -25,7 +25,7 @@ router.post(
     ApiUser.resgister,
 );
 
-// @route   POST api/user/login
+// @route   POST api/users/login
 // @desc    login user
 // @access  Public
 router.post(
@@ -39,26 +39,24 @@ router.post(
     ApiUser.login,
 );
 
-// @route   PUT api/user/editInfo
+// @route   PUT api/users/editInfo
 // @desc    Edit user information
 // @access  Private
 router.put(
     '/editInfo',
-    auth,
+
     [
         check('lastName', 'Không được bỏ trống tên').not().isEmpty(),
         check('email', 'Địa chỉ email không hợp lệ').isEmail(),
     ],
+    auth,
     ApiUser.editInfo,
 );
 
-// @route   DELETE api/user/delete
+// @route   DELETE api/users/delete
 // @desc    Delete User by admin
 // @access  Private
 router.delete('/delete/:id', auth, admin, ApiUser.deleteUser);
-
-
-
 
 // router.get('/', function (req, res) {
 //     pool.query('select * from my_db.users', function (error, results, fields) {

@@ -4,7 +4,6 @@ const UserService = require('../dbservice/UserService');
 const jwt = require('jsonwebtoken');
 
 module.exports = class ApiUser {
-    
     // @route   POST api/user/register
     // @desc    Register user
     // @access  Public
@@ -35,7 +34,12 @@ module.exports = class ApiUser {
                     user.password = await bcrypt.hash(password, salt);
 
                     UserService.addUser(user)
-                        .then(() => {
+                        .then((created) => {
+                            if(!created) {
+                               return res.status(400).send(
+                                    'Chưa đăng kí được tài khoản',
+                                );
+                            }
                             res.status(200).send(
                                 'Đăng kí tài khoản thành công',
                             );
@@ -146,8 +150,8 @@ module.exports = class ApiUser {
 
                 const user = req.body;
                 user.id = id;
-                UserService.updateUserInfo(user).then((data) => {
-                    if (!data) {
+                UserService.updateUserInfo(user).then((updated) => {
+                    if (!updated) {
                         return res.status(400).json({
                             error: 'Không sửa được thông tin của bạn ',
                         });
