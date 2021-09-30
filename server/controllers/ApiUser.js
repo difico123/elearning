@@ -12,31 +12,27 @@ module.exports = class ApiUser {
 
             let hasUser = UserService.getUserByEmail(email);
 
-            hasUser
-                .then(async (data) => {
-                    if (data[0]) {
+            hasUser.then(async (data) => {
+                if (data[0]) {
+                    return res
+                        .status(400)
+                        .json({ error: 'Email này đã có người đăng kí' });
+                }
+
+                const salt = await bcrypt.genSalt(10);
+                let user = req.body;
+                let { password } = user;
+                user.password = await bcrypt.hash(password, salt);
+
+                UserService.addUser(user).then((created) => {
+                    if (!created) {
                         return res
                             .status(400)
-                            .json({ error: 'Email này đã có người đăng kí' });
+                            .send('Chưa đăng kí được tài khoản');
                     }
-
-                    const salt = await bcrypt.genSalt(10);
-                    let user = req.body;
-                    let { password } = user;
-                    user.password = await bcrypt.hash(password, salt);
-
-                    UserService.addUser(user)
-                        .then((created) => {
-                            if (!created) {
-                                return res
-                                    .status(400)
-                                    .send('Chưa đăng kí được tài khoản');
-                            }
-                            res.status(200).send(
-                                'Đăng kí tài khoản thành công',
-                            );
-                        });
+                    res.status(200).send('Đăng kí tài khoản thành công');
                 });
+            });
         } catch (error) {
             res.status(500).send('server error ' + error.message);
         }
@@ -127,7 +123,6 @@ module.exports = class ApiUser {
                 const user = req.body;
                 user.id = id;
 
-                
                 UserService.getUserByEmail(user.email).then((data) => {
                     if (data[0]) {
                         return res.status(400).json({
@@ -188,8 +183,7 @@ module.exports = class ApiUser {
                     }
                     res.status(200).send('Bạn đã trở thành instructor');
                 });
-            })
-            
+            });
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');

@@ -52,9 +52,8 @@ module.exports = class UserService {
     static async updateUserInfo(user) {
         try {
             const response = await new Promise((resolve, reject) => {
-                
-                let query = 'UPDATE users SET ? WHERE id = ?'
-                pool.query(query, [user,user.id], (err, result) => {
+                let query = 'UPDATE users SET ? WHERE id = ?';
+                pool.query(query, [user, user.id], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result.affectedRows);
                 });

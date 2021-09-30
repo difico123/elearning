@@ -66,5 +66,4 @@ router.delete('/delete/:id', auth, admin, ApiUser.deleteUser);
 // @access  Private
 router.put('/beAnIntructor', auth, ApiUser.beAnIntructor);
 
-
 module.exports = router;

@@ -21,11 +21,11 @@ router.post(
 // @route   PUT api/course/activate
 // @desc    Activate course
 // @access  Private
-router.put(
-    '/activateCourse',
-    auth,
-    instructorAuth,
-    ApiCourse.activateCourse,
-);
+router.put('/activate/:id', auth, instructorAuth, ApiCourse.activateCourse);
+
+// @route   GET api/course/show
+// @desc    show instructor'courses
+// @access  Private
+router.get('/show', auth, instructorAuth, ApiCourse.showCourse);
 
 module.exports = router;

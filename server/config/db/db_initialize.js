@@ -11,7 +11,7 @@ module.exports.initialize = async function () {
             'phoneNumber VARCHAR(10) NOT NULL, ' +
             'address VARCHAR(50), ' +
             'city VARCHAR(50), ' +
-            'role INT NOT NULL DEFAULT 3, ' +
+            'role INT NOT NULL DEFAULT 0, ' +
             'password VARCHAR(255) NOT NULL, ' +
             'imageUrl VARCHAR(500), ' +
             'dateAdded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
