@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs'); // encrypt password
 const UserService = require('../dbservice/UserService');
 const jwt = require('jsonwebtoken');
+const formidable = require('formidable');
+const fs = require('fs');
 
 module.exports = class ApiUser {
     // @route   POST api/user/register
@@ -111,26 +113,53 @@ module.exports = class ApiUser {
     // @desc    Edit user information
     // @access  Private
     static async editInfo(req, res) {
-        try {
+        const form = new formidable.IncomingForm();
+        form.keepExtensions = true;
+        form.uploadDir = './uploads/users';
+        form.maxFieldsSize = 1024 * 1024;
+        form.multiples = false;
+
+        form.parse(req, (err, fields, files) => {
+            if (err) {
+                return res.status(400).json({
+                    error: 'Image could not be uploaded!',
+                });
+            }
             let { id } = req.user;
-            UserService.getUserInfoById(id).then((data) => {
-                if (!data[0]) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Không tìm thấy user' });
+            let newUser = fields;
+            newUser.id = id;
+
+            if (files['imageUrl']) {
+                const { size, type, path } = files['imageUrl'];
+                if (size !== 0) {
+                    if (
+                        type != 'image/jpeg' &&
+                        type != 'image/jpg' &&
+                        type != 'image/png'
+                    ) {
+                        return res.status(400).json({
+                            error: 'Image type is not allowed!',
+                        });
+                    }
+                    if (size > 1000000) {
+                        return res.status(400).json({
+                            error: 'Kích thước ảnh phải nhỏ hơn 1MB',
+                        });
+                    }
+
+                    let imageUrl = path;
+                    newUser.imageUrl = imageUrl;
                 }
-
-                const user = req.body;
-                user.id = id;
-
-                UserService.getUserByEmail(user.email).then((data) => {
+            }
+            try {
+                UserService.getUserByEmail(newUser.email).then((data) => {
                     if (data[0]) {
                         return res.status(400).json({
                             error: 'Email này đã có người đăng kí',
                         });
                     }
 
-                    UserService.updateUserInfo(user).then((updated) => {
+                    UserService.updateUserInfo(newUser).then((updated) => {
                         if (!updated) {
                             return res.status(400).json({
                                 error: 'Không sửa được thông tin của bạn ',
@@ -139,11 +168,11 @@ module.exports = class ApiUser {
                         res.status(200).send('Đã sửa thông tin của bạn ');
                     });
                 });
-            });
-        } catch (error) {
-            console.log(error.message);
-            res.status(500).send('Server error');
-        }
+            } catch (error) {
+                console.log(error.message);
+                res.status(500).send('Server error');
+            }
+        });
     }
 
     // @route   DELETE api/users/delete
@@ -183,6 +212,33 @@ module.exports = class ApiUser {
                     }
                     res.status(200).send('Bạn đã trở thành instructor');
                 });
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+
+// @route   GET api/user/showAvt
+// @desc    show user avatar
+// @access  Public
+    static async showAvt(req, res) {
+        try {
+            //get user information by id
+            let { id } = req.params;
+            UserService.showAvt(id).then((data) => {
+                if (!data[0]) {
+                    return res.status(400).json({
+                        error: 'Không có dữ liệu đường dẫn ảnh',
+                    });
+                }
+                fs.readFile(data[0].imageUrl, function (err,imgData) {
+                    if(err) {
+                        return res.send(err);
+                    }
+                    res.writeHead(200,{'Content-Type': "image/jpeg"});
+                    res.end(imgData);
+                })
             });
         } catch (error) {
             console.log(error.message);

@@ -18,10 +18,15 @@ router.post(
     ApiCourse.createCourse,
 );
 
-// @route   PUT api/course/activate
+// @route   PUT api/course/activate/:id
 // @desc    Activate course
 // @access  Private
 router.put('/activate/:id', auth, instructorAuth, ApiCourse.activateCourse);
+
+// @route   PUT api/course/suspend/:id
+// @desc    suspend course
+// @access  Private
+router.put('/suspend/:id', auth, instructorAuth, ApiCourse.suspendCourse);
 
 // @route   GET api/course/show
 // @desc    show instructor'courses

@@ -66,4 +66,9 @@ router.delete('/delete/:id', auth, admin, ApiUser.deleteUser);
 // @access  Private
 router.put('/beAnIntructor', auth, ApiUser.beAnIntructor);
 
+// @route   GET api/user/showAvt
+// @desc    show user avatar
+// @access  Public
+router.get('/showAvt/:id', ApiUser.showAvt);
+
 module.exports = router;

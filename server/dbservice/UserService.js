@@ -81,4 +81,20 @@ module.exports = class UserService {
             console.log(error);
         }
     }
+
+    static async showAvt(id) {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query = 'SELECT imageUrl FROM users WHERE id = ?';
+
+                pool.query(query, [id], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

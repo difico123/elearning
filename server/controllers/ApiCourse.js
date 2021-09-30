@@ -49,6 +49,29 @@ module.exports = class ApiCourse {
         }
     }
 
+    // @route   PUT api/course/suspend/:id
+    // @desc    Suspend course
+    // @access  Private
+    static async suspendCourse(req, res) {
+        const instructorId = req.user.id;
+        const courseId = req.params.id;
+        try {
+            CourseService.suspendCourse(instructorId, courseId).then(
+                (updated) => {
+                    if (!updated) {
+                        return res
+                            .status(400)
+                            .json({ error: 'Chưa tạm dừng khoá học' });
+                    }
+                    res.status(200).send('Khoá học đã được tạm dừng');
+                },
+            );
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+
     // @route   GET api/course/show
     // @desc    show instructor'courses
     // @access  Private
