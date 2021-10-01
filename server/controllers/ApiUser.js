@@ -116,63 +116,69 @@ module.exports = class ApiUser {
         const form = new formidable.IncomingForm();
         form.keepExtensions = true;
         form.uploadDir = './uploads/users';
-        form.maxFieldsSize = 1024 * 1024;
+        form.maxFieldsSize = 1000000;
+        form.maxFileSize = 1000000;
         form.multiples = false;
 
-        form.parse(req, (err, fields, files) => {
-            if (err) {
-                return res.status(400).json({
-                    error: 'Image could not be uploaded!',
-                });
-            }
-            let { id } = req.user;
-            let newUser = fields;
-            newUser.id = id;
+        let { id } = req.user;
 
-            if (files['imageUrl']) {
-                const { size, type, path } = files['imageUrl'];
-                if (size !== 0) {
-                    if (
-                        type != 'image/jpeg' &&
-                        type != 'image/jpg' &&
-                        type != 'image/png'
-                    ) {
+        UserService.getUserInfoById(id)
+            .then((users) => {
+                let { imageUrl } = users[0];
+
+                form.parse(req, (err, fields, files) => {
+                    if (err) {
                         return res.status(400).json({
-                            error: 'Image type is not allowed!',
+                            error: 'File của bạn bị lỗi, có thể do kích thước file lớn hơn 1MB',
                         });
                     }
-                    if (size > 1000000) {
-                        return res.status(400).json({
-                            error: 'Kích thước ảnh phải nhỏ hơn 1MB',
-                        });
+                    let newUser = fields;
+                    newUser.id = id;
+
+                    if (files['imageUrl']) {
+                        const { size, type, path } = files['imageUrl'];
+                        if (size !== 0) {
+                            if (
+                                type != 'image/jpeg' &&
+                                type != 'image/jpg' &&
+                                type != 'image/png'
+                            ) {
+                                fs.unlinkSync(path);
+                                return res.status(400).json({
+                                    error: 'Image type is not allowed!',
+                                });
+                            }
+
+                            if (fs.existsSync(imageUrl)) {
+                                fs.unlinkSync(imageUrl);
+                                console.log(`successfully deleted ${imageUrl}`);
+                            }
+                            newUser.imageUrl = path;
+                        }
                     }
 
-                    let imageUrl = path;
-                    newUser.imageUrl = imageUrl;
-                }
-            }
-            try {
-                UserService.getUserByEmail(newUser.email).then((data) => {
-                    if (data[0]) {
-                        return res.status(400).json({
-                            error: 'Email này đã có người đăng kí',
-                        });
-                    }
-
-                    UserService.updateUserInfo(newUser).then((updated) => {
-                        if (!updated) {
+                    UserService.getUserByEmail(newUser.email).then((data) => {
+                        if (data[0]) {
                             return res.status(400).json({
-                                error: 'Không sửa được thông tin của bạn ',
+                                error: 'Email này đã có người đăng kí',
                             });
                         }
-                        res.status(200).send('Đã sửa thông tin của bạn ');
+
+                        UserService.updateUserInfo(newUser).then((updated) => {
+                            if (!updated) {
+                                return res.status(400).json({
+                                    error: 'Không sửa được thông tin của bạn ',
+                                });
+                            }
+                            res.status(200).send('Đã sửa thông tin của bạn ');
+                        });
                     });
                 });
-            } catch (error) {
-                console.log(error.message);
+            })
+            .catch((err) => {
+                console.log(err.message);
                 res.status(500).send('Server error');
-            }
-        });
+            });
     }
 
     // @route   DELETE api/users/delete
@@ -219,26 +225,27 @@ module.exports = class ApiUser {
         }
     }
 
-// @route   GET api/user/showAvt
-// @desc    show user avatar
-// @access  Public
+    // @route   GET api/user/showAvt
+    // @desc    show user avatar
+    // @access  Public
     static async showAvt(req, res) {
         try {
             //get user information by id
             let { id } = req.params;
             UserService.showAvt(id).then((data) => {
-                if (!data[0]) {
+                let { imageUrl } = data[0];
+                if (!imageUrl) {
                     return res.status(400).json({
                         error: 'Không có dữ liệu đường dẫn ảnh',
                     });
                 }
-                fs.readFile(data[0].imageUrl, function (err,imgData) {
-                    if(err) {
+                fs.readFile(imageUrl, function (err, imgData) {
+                    if (err) {
                         return res.send(err);
                     }
-                    res.writeHead(200,{'Content-Type': "image/jpeg"});
+                    res.writeHead(200, { 'Content-Type': 'image/jpeg' });
                     res.end(imgData);
-                })
+                });
             });
         } catch (error) {
             console.log(error.message);
