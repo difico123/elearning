@@ -61,10 +61,10 @@ router.put(
 // @access  Private
 router.delete('/delete/:id', auth, admin, ApiUser.deleteUser);
 
-// @route   PUT api/user/beIntructor
+// @route   PUT api/user/beInstructor
 // @desc    to be an instructor
 // @access  Private
-router.put('/beAnIntructor', auth, ApiUser.beAnIntructor);
+router.put('/beAnInstructor', auth, ApiUser.beAnInstructor);
 
 // @route   GET api/user/showAvt
 // @desc    show user avatar by user id

@@ -201,10 +201,10 @@ module.exports = class ApiUser {
             res.status(500).send('Server error');
         }
     }
-    // @route   PUT api/user/beAnIntructor
+    // @route   PUT api/user/beAnInstructor
     // @desc    to be an beIntructor
     // @access  Private
-    static async beAnIntructor(req, res) {
+    static async beAnInstructor(req, res) {
         try {
             //get user information by id
             UserService.getUserInfoById(req.user.id).then((data) => {
