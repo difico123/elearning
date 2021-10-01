@@ -93,7 +93,7 @@ module.exports = class ApiUser {
             .catch((err) => console.log(err));
     }
 
-    // @route   POST api/user
+    // @route   GET api/user/info
     // @desc    Get user information
     // @access  Private
     static async getInfor(req, res) {
@@ -156,22 +156,13 @@ module.exports = class ApiUser {
                             newUser.imageUrl = path;
                         }
                     }
-
-                    UserService.getUserByEmail(newUser.email).then((data) => {
-                        if (data[0]) {
+                    UserService.updateUserInfo(newUser).then((updated) => {
+                        if (!updated) {
                             return res.status(400).json({
-                                error: 'Email này đã có người đăng kí',
+                                error: 'Không sửa được thông tin của bạn ',
                             });
                         }
-
-                        UserService.updateUserInfo(newUser).then((updated) => {
-                            if (!updated) {
-                                return res.status(400).json({
-                                    error: 'Không sửa được thông tin của bạn ',
-                                });
-                            }
-                            res.status(200).send('Đã sửa thông tin của bạn ');
-                        });
+                        res.status(200).send('Đã sửa thông tin của bạn ');
                     });
                 });
             })

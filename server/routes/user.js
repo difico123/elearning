@@ -6,7 +6,7 @@ const auth = require('../middleware/auth/auth');
 const admin = require('../middleware/auth/admin.auth');
 const validateInput = require('../middleware/errors/validateInput');
 
-// @route   GET api/user
+// @route   GET api/user/info
 // @desc    User information
 // @access  Private
 router.get('/info', auth, ApiUser.getInfor);
@@ -47,10 +47,7 @@ router.post(
 // @access  Private
 router.put(
     '/editInfo',
-    [
-        check('lastName', 'Không được bỏ trống tên').not().isEmpty(),
-        check('email', 'Địa chỉ email không hợp lệ').isEmail(),
-    ],
+    [check('lastName', 'Không được bỏ trống tên').not().isEmpty()],
     auth,
     validateInput,
     ApiUser.editInfo,

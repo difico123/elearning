@@ -80,4 +80,20 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
+    static async showAll(id) {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query =
+                    'SELECT name,instructor FROM courses where verified = 1';
+
+                pool.query(query, [id], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

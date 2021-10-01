@@ -33,4 +33,9 @@ router.put('/suspend/:id', auth, instructorAuth, ApiCourse.suspendCourse);
 // @access  Private
 router.get('/show', auth, instructorAuth, ApiCourse.showCourse);
 
+// @route   GET api/course/showAll
+// @desc    Show all courses
+// @access  public
+router.get('/showAll', ApiCourse.showAll);
+
 module.exports = router;

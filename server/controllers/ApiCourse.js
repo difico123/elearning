@@ -90,4 +90,22 @@ module.exports = class ApiCourse {
             res.status(500).send('Server error');
         }
     }
+    // @route   GET api/course/showAll
+    // @desc    show all courses
+    // @access  public
+    static async showAll(req, res) {
+        try {
+            CourseService.showAll().then((data) => {
+                if (data.length == 0) {
+                    return res
+                        .status(400)
+                        .json({ error: 'Không có khoá học nào' });
+                }
+                res.status(200).json(data);
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
 };
