@@ -243,4 +243,45 @@ module.exports = class ApiUser {
             res.status(500).send('Server error');
         }
     }
+
+    // @route   PUT api/user/editPw
+    // @desc    edit user password
+    // @access  private
+    static async editPw(req, res) {
+        try {
+            //get user information by id
+            let { id } = req.user;
+
+            let password = req.body.password;
+            UserService.getUserInfoById(id).then(async(data) => {
+                const isMatch = await bcrypt.compare(
+                    password,
+                    data[0].password,
+                );
+                if (!isMatch) {
+                    return res.status(404).json({
+                        error: 'Mật khẩu của bạn không chính xác',
+                    });
+                }
+                const salt = await bcrypt.genSalt(10);
+                let user = {
+                    id: id,
+                    password: req.body.newPassword,
+                };
+                user.password = await bcrypt.hash(user.password, salt);
+                UserService.updateUserInfo(user).then((updated) => {
+                    return updated
+                        ? res
+                              .status(200)
+                              .json('Mật khẩu của bạn đã được cập nhật')
+                        : res
+                              .status(400)
+                              .json({ error: 'Mật khẩu chưa được cập nhật' });
+                });
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
 };

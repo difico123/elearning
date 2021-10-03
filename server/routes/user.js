@@ -68,4 +68,9 @@ router.put('/beAnInstructor', auth, ApiUser.beAnInstructor);
 // @access  Public
 router.get('/showAvt/:id', ApiUser.showAvt);
 
+// @route   PUT api/user/editPw
+// @desc    edit user password
+// @access  private
+router.put('/editPw', auth, ApiUser.editPw);
+
 module.exports = router;

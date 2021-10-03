@@ -32,40 +32,27 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
-    static async activateCourse(instructorId, courseId) {
+    static async CourseStatus(instructorId, courseId, courseStatus) {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query =
-                    'UPDATE courses SET verified = 1 WHERE id = ? and instructor = ?';
+                    'UPDATE courses SET verified = ? WHERE id = ? and instructor = ?';
 
-                pool.query(query, [courseId, instructorId], (err, result) => {
-                    if (err) reject(new Error(err.message));
-                    resolve(result.affectedRows);
-                });
+                pool.query(
+                    query,
+                    [courseStatus, courseId, instructorId],
+                    (err, result) => {
+                        if (err) reject(new Error(err.message));
+                        resolve(result.affectedRows);
+                    },
+                );
             });
             return response === 1 ? true : false;
         } catch (error) {
             console.log(error);
         }
     }
-    static async suspendCourse(instructorId, courseId) {
-        try {
-            const response = await new Promise((resolve, reject) => {
-                const query =
-                    'UPDATE courses SET verified = 0 WHERE id = ? and instructor = ?';
-
-                pool.query(query, [courseId, instructorId], (err, result) => {
-                    if (err) reject(new Error(err.message));
-                    resolve(result.affectedRows);
-                });
-            });
-            return response === 1 ? true : false;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    static async showCourseByInstructorId(id) {
+    static async showCoursesByInstructorId(id) {
         try {
             const respond = await new Promise((resolve, reject) => {
                 const query = 'SELECT * FROM courses WHERE instructor = ?';
@@ -85,6 +72,22 @@ module.exports = class CourseService {
             const respond = await new Promise((resolve, reject) => {
                 const query =
                     'SELECT name,instructor FROM courses where verified = 1';
+
+                pool.query(query, [id], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async getCourseById(id) {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM courses WHERE id = ?';
 
                 pool.query(query, [id], (err, result) => {
                     if (err) reject(new Error(err.message));

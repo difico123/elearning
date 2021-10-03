@@ -38,4 +38,9 @@ router.get('/show', auth, instructorAuth, ApiCourse.showCourse);
 // @access  public
 router.get('/showAll', ApiCourse.showAll);
 
+// @route   POST api/course/enroll
+// @desc    enroll a course by student
+// @access  private
+router.post('/enroll/:id', auth, ApiCourse.enroll);
+
 module.exports = router;
