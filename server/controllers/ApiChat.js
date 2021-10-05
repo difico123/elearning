@@ -24,4 +24,24 @@ module.exports = class ApiChat {
             res.status(500).send('Server error');
         }
     }
+
+
+    // @route   GET api/chat/getCourseChats/:courseId
+    // @desc    get conversation
+    // @access  Private
+    static async getCourseChats(req, res) {
+        try {
+            ChatService.getConversation(req.params.courseId).then((messages) => {
+                if (messages.length === 0) {
+                    return res
+                        .status(400)
+                        .json({ error: 'Không có cuộc nói chuyện nào' });
+                }
+                res.status(200).json(messages);
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
 };

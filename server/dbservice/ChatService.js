@@ -16,4 +16,21 @@ module.exports = class ChatService {
             console.log(error);
         }
     }
+
+
+    static async getConversation(courseId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM chats WHERE course = ? ';
+
+                pool.query(query, [courseId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

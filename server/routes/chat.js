@@ -9,4 +9,9 @@ const userCourseAuth = require('../middleware/auth/userCourse.auth');
 // @access  Private
 router.post('/chats/:courseId', auth, userCourseAuth, ApiChat.chat);
 
+// @route   GET api/chat/getCourseChats/:courseId
+// @desc    get conversation
+// @access  Private
+router.get('/getCourseChats/:courseId', auth, userCourseAuth, ApiChat.getCourseChats);
+
 module.exports = router;
