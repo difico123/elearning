@@ -15,7 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 // const connect = require('./config/db/db_initialize').initialize();
 
 app.use('/api/user', require('./routes/user'));
+app.use('/api/chat', require('./routes/chat'));
 app.use('/api/course', require('./routes/course'));
+app.use('/api/userCourse', require('./routes/usercourse'));
 
 app.use((req, res) => {
     res.status(404).json({

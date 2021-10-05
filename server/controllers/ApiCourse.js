@@ -1,5 +1,4 @@
 const CourseService = require('../dbservice/CourseService');
-const UserCourseService = require('../dbservice/UserCourseService');
 
 module.exports = class ApiCourse {
     // @route   POST api/course/create
@@ -80,9 +79,49 @@ module.exports = class ApiCourse {
     // @route   GET api/course/show
     // @desc    show instructor'courses
     // @access  Private
-    static async showCourse(req, res) {
+    static async getCourses(req, res) {
         try {
-            CourseService.showCourseByInstructorId(req.user.id).then((data) => {
+            CourseService.getCoursesByInstructorId(req.user.id).then((data) => {
+                if (data.length == 0) {
+                    return res
+                        .status(400)
+                        .json({ error: 'Bạn chưa có khoá học nào' });
+                }
+                res.status(200).json(data);
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+
+    // @route   GET api/course/instructorCourse/:courseId
+    // @desc    show single instructor'course
+    // @access  Private
+    static async getSingleCourse(req, res) {
+        try {
+            CourseService.getSingleInstructorCourse(
+                req.user.id,
+                req.params.courseId,
+            ).then((data) => {
+                if (!data[0]) {
+                    return res
+                        .status(400)
+                        .json({ error: 'Bạn không có khoá học này' });
+                }
+                res.status(200).json(data);
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+    // @route   GET api/course/show
+    // @desc    show instructor'courses
+    // @access  Private
+    static async showSingleCourse(req, res) {
+        try {
+            CourseService.getCoursesByInstructorId(req.user.id).then((data) => {
                 if (data.length == 0) {
                     return res
                         .status(400)
@@ -100,53 +139,13 @@ module.exports = class ApiCourse {
     // @access  public
     static async showAll(req, res) {
         try {
-            CourseService.showAll().then((data) => {
+            CourseService.getAll().then((data) => {
                 if (data.length == 0) {
                     return res
                         .status(400)
                         .json({ error: 'Không có khoá học nào' });
                 }
                 res.status(200).json(data);
-            });
-        } catch (error) {
-            console.log(error.message);
-            res.status(500).send('Server error');
-        }
-    }
-
-    // @route   GET api/course/enroll
-    // @desc    enroll a course by student
-    // @access  private
-    static async enroll(req, res) {
-        try {
-            let courseId = req.params.id;
-            let studentId = req.user.id;
-
-            // check if the student is this course'instructor
-            CourseService.getCourseById(courseId).then((courses) => {
-                let course = courses[0];
-                if (
-                    !course ||
-                    course.instructor === studentId ||
-                    course.verified === 0
-                ) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Bạn không thể đăng kí khoá học này' });
-                }
-                // student can enroll course
-                let userCourse = {
-                    user: studentId,
-                    course: courseId,
-                };
-                UserCourseService.add(userCourse).then((added) => {
-                    if (!added) {
-                        return res
-                            .status(400)
-                            .json({ error: 'Chưa đăng kí được khoá học' });
-                    }
-                    res.status(200).send('Đăng kí khoá học thành công');
-                });
             });
         } catch (error) {
             console.log(error.message);

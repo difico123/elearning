@@ -55,7 +55,7 @@ module.exports = class ApiUser {
                 }
 
                 try {
-                    //else Compare passwords
+                    // Compare passwords
                     const isMatch = await bcrypt.compare(
                         password,
                         data[0].password,
@@ -148,7 +148,7 @@ module.exports = class ApiUser {
                                     error: 'Image type is not allowed!',
                                 });
                             }
-
+                            // check if exist file path and delete file
                             if (fs.existsSync(imageUrl)) {
                                 fs.unlinkSync(imageUrl);
                                 console.log(`successfully deleted ${imageUrl}`);
@@ -224,6 +224,11 @@ module.exports = class ApiUser {
             //get user information by id
             let { id } = req.params;
             UserService.showAvt(id).then((data) => {
+                if (data.length === 0) {
+                    return res.status(400).json({
+                        error: 'Không tìm thấy thông tin của user',
+                    });
+                }
                 let { imageUrl } = data[0];
                 if (!imageUrl) {
                     return res.status(400).json({
@@ -253,7 +258,7 @@ module.exports = class ApiUser {
             let { id } = req.user;
 
             let password = req.body.password;
-            UserService.getUserInfoById(id).then(async(data) => {
+            UserService.getUserInfoById(id).then(async (data) => {
                 const isMatch = await bcrypt.compare(
                     password,
                     data[0].password,

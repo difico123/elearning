@@ -52,33 +52,41 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
-    static async showCoursesByInstructorId(id) {
+    static async getCoursesByInstructorId(id) {
         try {
-            const respond = await new Promise((resolve, reject) => {
-                const query = 'SELECT * FROM courses WHERE instructor = ?';
+            const response = await new Promise((resolve, reject) => {
+                const query =
+                    'SELECT courses.*, ' +
+                    'concat(users.firstName, " " , users.middleName, " ", users.lastName) as instructorFullName, ' +
+                    'users.email as instructorEmail FROM courses ' +
+                    'join users on users.id = courses.instructor ' +
+                    'WHERE instructor = ?';
 
                 pool.query(query, [id], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
                 });
             });
-            return respond;
+            return response;
         } catch (error) {
             console.log(error);
         }
     }
-    static async showAll(id) {
+    static async getAll() {
         try {
-            const respond = await new Promise((resolve, reject) => {
+            const response = await new Promise((resolve, reject) => {
                 const query =
-                    'SELECT name,instructor FROM courses where verified = 1';
-
-                pool.query(query, [id], (err, result) => {
+                    'SELECT courses.id, courses.name, courses.instructor, ' +
+                    'concat(users.firstName, " " , users.middleName, " ", users.lastName) as fullName, ' +
+                    'users.email FROM courses ' +
+                    'join users on users.id = courses.instructor ' +
+                    'where verified = 1';
+                pool.query(query, (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
                 });
             });
-            return respond;
+            return response;
         } catch (error) {
             console.log(error);
         }
@@ -90,6 +98,23 @@ module.exports = class CourseService {
                 const query = 'SELECT * FROM courses WHERE id = ?';
 
                 pool.query(query, [id], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async getSingleInstructorCourse(instructorId, courseId) {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query =
+                    'SELECT * FROM courses WHERE id = ? and instructor = ?';
+
+                pool.query(query, [courseId, instructorId], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
                 });

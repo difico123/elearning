@@ -28,19 +28,24 @@ router.put('/activate/:id', auth, instructorAuth, ApiCourse.activateCourse);
 // @access  Private
 router.put('/suspend/:id', auth, instructorAuth, ApiCourse.suspendCourse);
 
-// @route   GET api/course/show
+// @route   GET api/course/instructorCourses
 // @desc    show instructor'courses
 // @access  Private
-router.get('/show', auth, instructorAuth, ApiCourse.showCourse);
+router.get('/instructorCourses', auth, instructorAuth, ApiCourse.getCourses);
+
+// @route   GET api/course/instructorCourse/:courseId
+// @desc    show single instructor'course
+// @access  Private
+router.get(
+    '/instructorCourse/:courseId',
+    auth,
+    instructorAuth,
+    ApiCourse.getSingleCourse,
+);
 
 // @route   GET api/course/showAll
 // @desc    Show all courses
 // @access  public
 router.get('/showAll', ApiCourse.showAll);
-
-// @route   POST api/course/enroll
-// @desc    enroll a course by student
-// @access  private
-router.post('/enroll/:id', auth, ApiCourse.enroll);
 
 module.exports = router;

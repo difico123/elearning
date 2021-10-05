@@ -54,7 +54,7 @@ router.put(
 );
 
 // @route   DELETE api/user/delete
-// @desc    Delete User by admin
+// @desc    Delete user by admin
 // @access  Private
 router.delete('/delete/:id', auth, admin, ApiUser.deleteUser);
 
