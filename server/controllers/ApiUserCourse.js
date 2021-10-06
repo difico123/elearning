@@ -2,7 +2,7 @@ const CourseService = require('../dbservice/CourseService');
 const UserCourseService = require('../dbservice/UserCourseService');
 
 module.exports = class ApiCourse {
-    // @route   GET api/userCourse/enroll
+    // @route   GET api/userCourse/enroll/:courseId
     // @desc    enroll a course by student
     // @access  private
     static async enroll(req, res) {

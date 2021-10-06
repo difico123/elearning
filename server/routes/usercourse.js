@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth/auth');
 const ApiUserCourse = require('../controllers/ApiUserCourse');
 
-// @route   POST api/userCourse/enroll
+// @route   POST api/userCourse/enroll/:courseId
 // @desc    enroll a course by student
 // @access  private
 router.post('/enroll/:courseId', auth, ApiUserCourse.enroll);

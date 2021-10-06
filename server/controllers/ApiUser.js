@@ -172,7 +172,7 @@ module.exports = class ApiUser {
             });
     }
 
-    // @route   DELETE api/users/delete
+    // @route   DELETE api/user/delete/:id
     // @desc    Delete user by admin
     // @access  Private
     static async deleteUser(req, res) {
@@ -192,6 +192,7 @@ module.exports = class ApiUser {
             res.status(500).send('Server error');
         }
     }
+
     // @route   PUT api/user/beAnInstructor
     // @desc    to be an beIntructor
     // @access  Private
@@ -216,7 +217,7 @@ module.exports = class ApiUser {
         }
     }
 
-    // @route   GET api/user/showAvt
+    // @route   GET api/user/showAvt/:id
     // @desc    show user avatar
     // @access  Public
     static async showAvt(req, res) {

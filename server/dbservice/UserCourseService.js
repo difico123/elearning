@@ -21,7 +21,7 @@ module.exports = class UserCourseService {
         try {
             const response = new Promise((resolve, reject) => {
                 const query =
-                    'SELECT uc.id, u.role as userRole, uc.isComplete, uc.marks, c.name, uc.dateAdded as enrollDate ,' +
+                    'SELECT uc.id, u.role as userRole, uc.isComplete, uc.marks,c.id as courseId, c.name, uc.dateAdded as enrollDate ,' +
                     'c.instructor , concat(u.firstName," ", u.middleName, " ", u.lastName) as fullName, ' +
                     'u.email,u.address , u.city,u.phoneNumber ' +
                     'FROM user_courses uc ' +

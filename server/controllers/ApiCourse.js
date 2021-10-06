@@ -24,7 +24,7 @@ module.exports = class ApiCourse {
         }
     }
 
-    // @route   PUT api/course/activate
+    // @route   PUT api/course/activate/:id
     // @desc    activate course
     // @access  Private
     static async activateCourse(req, res) {

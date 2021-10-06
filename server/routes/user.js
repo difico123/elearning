@@ -41,6 +41,12 @@ router.post(
     validateInput,
     ApiUser.login,
 );
+// @route   POST api/user/logout
+// @desc    logout user
+// @access  private
+router.post('/logout', (req, res) => {
+    res.send('logout');
+});
 
 // @route   PUT api/user/editInfo
 // @desc    Edit user information
@@ -53,7 +59,7 @@ router.put(
     ApiUser.editInfo,
 );
 
-// @route   DELETE api/user/delete
+// @route   DELETE api/user/delete/:id
 // @desc    Delete user by admin
 // @access  Private
 router.delete('/delete/:id', auth, admin, ApiUser.deleteUser);
@@ -63,7 +69,7 @@ router.delete('/delete/:id', auth, admin, ApiUser.deleteUser);
 // @access  Private
 router.put('/beAnInstructor', auth, ApiUser.beAnInstructor);
 
-// @route   GET api/user/showAvt
+// @route   GET api/user/showAvt/:id
 // @desc    show user avatar by user id
 // @access  Public
 router.get('/showAvt/:id', ApiUser.showAvt);

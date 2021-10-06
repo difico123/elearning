@@ -14,7 +14,7 @@ module.exports = async function (req, res, next) {
                         (studentCourse) => {
                             if (!studentCourse[0]) {
                                 return res.status(403).json({
-                                    error: 'Bạn không có quyền trong khoá học này',
+                                    error: 'Bạn không có quyền trong khoá học này, bạn phải đăng kí khoá học này trước đã',
                                 });
                             }
                             next();
