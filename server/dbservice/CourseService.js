@@ -124,4 +124,5 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
+
 };

@@ -60,4 +60,21 @@ module.exports = class UserCourseService {
             console.log(error);
         }
     }
+
+    static async getCourseUsers(courseId) {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query =
+                    'select * from user_courses where course = ?';
+
+                pool.query(query, [courseId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

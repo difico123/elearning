@@ -48,4 +48,9 @@ router.get(
 // @access  public
 router.get('/showAll', ApiCourse.showAll);
 
+// @route   GET api/course/getUsers/:courseId
+// @desc    Get all users in the course
+// @access  private
+router.get('/getUsers/:courseId',auth,instructorAuth, ApiCourse.showUsers);
+
 module.exports = router;

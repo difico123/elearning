@@ -19,5 +19,4 @@ router.get(
     ApiChat.getCourseChats,
 );
 
-
 module.exports = router;

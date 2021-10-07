@@ -1,7 +1,6 @@
 const NotificationService = require('../dbservice/NotificationService');
 
 module.exports = class ApiNotification {
-
     // @route   GET api/notification/get
     // @desc    get notification by user
     // @access  Private

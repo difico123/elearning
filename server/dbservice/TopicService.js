@@ -1,12 +1,12 @@
 const pool = require('../config/db/db');
 
 module.exports = class NotificationService {
-    static async addNotification(notification) {
+    static async addTopic(topic) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'INSERT INTO notifications SET ? ';
+                const query = 'INSERT INTO topics SET ? ';
 
-                pool.query(query, [notification], (err, result) => {
+                pool.query(query, [topic], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result.affectedRows);
                 });
@@ -17,14 +17,13 @@ module.exports = class NotificationService {
         }
     }
 
-    static async getNotification(userId) {
+    static async getCourseTopics(courseId) {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query =
-                    'SELECT *, DATE_FORMAT(dateAdded, "ngày %d tháng %m năm %Y") as date FROM notifications ' +
-                    'WHERE user = ? order by dateAdded desc';
+                    'select * from topics where course = ?';
 
-                pool.query(query, [userId], (err, result) => {
+                pool.query(query, [courseId], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
                 });
