@@ -20,8 +20,7 @@ module.exports = class NotificationService {
     static async getCourseTopics(courseId) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query =
-                    'select * from topics where course = ?';
+                const query = 'select * from topics where course = ?';
 
                 pool.query(query, [courseId], (err, result) => {
                     if (err) reject(new Error(err.message));

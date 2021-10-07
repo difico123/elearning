@@ -135,7 +135,7 @@ module.exports = class ApiCourse {
             res.status(500).send('Server error');
         }
     }
-    
+
     // @route   GET api/course/showAll
     // @desc    show all courses
     // @access  public
@@ -155,19 +155,21 @@ module.exports = class ApiCourse {
         }
     }
 
-// @route   GET api/course/getUsers/:courseId
-// @desc    Get all users in the course
-// @access  private
+    // @route   GET api/course/getUsers/:courseId
+    // @desc    Get all users in the course
+    // @access  private
     static async showUsers(req, res) {
         try {
-            UserCourseService.getCourseUsers(req.params.courseId).then((data) => {
-                if (data.length == 0) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Không có khoá học nào' });
-                }
-                res.status(200).json(data);
-            });
+            UserCourseService.getCourseUsers(req.params.courseId).then(
+                (data) => {
+                    if (data.length == 0) {
+                        return res
+                            .status(400)
+                            .json({ error: 'Không có khoá học nào' });
+                    }
+                    res.status(200).json(data);
+                },
+            );
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');

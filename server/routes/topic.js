@@ -4,7 +4,7 @@ const auth = require('../middleware/auth/auth');
 const instructorAuth = require('../middleware/auth/instructor.auth');
 const courseInstructorAuth = require('../middleware/auth/courseInstructor.auth');
 const ApiTopic = require('../controllers/ApiTopic');
-const userCourseAuth = require('../middleware/auth/userCourse.auth')
+const userCourseAuth = require('../middleware/auth/userCourse.auth');
 
 // @route   POST api/notification/create
 // @desc    create topic by instructor

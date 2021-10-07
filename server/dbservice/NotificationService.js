@@ -34,4 +34,20 @@ module.exports = class NotificationService {
             console.log(error);
         }
     }
+    static async setViewed(notificationsId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                let query = 'UPDATE notifications SET viewed = 1 WHERE id = ?';
+                pool.query(query, [notificationsId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result.affectedRows);
+                });
+            });
+
+            return response === 1 ? true : false;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
 };

@@ -22,38 +22,37 @@ module.exports = class ApiCourse {
                 }
 
                 UserCourseService.getCourseUsers(topic.course).then((users) => {
-                    if(users.length === 0) {
+                    if (users.length === 0) {
                         return res
-                        .status(400)
-                        .json({ error: 'Không học sinh nào trong khoá học này' });
+                            .status(400)
+                            .json({
+                                error: 'Không học sinh nào trong khoá học này',
+                            });
                     }
-                    let notifyToUser = users.map(user => {
+                    let notifyToUser = users.map((user) => {
                         let notification = {
                             user: user.userId,
                             topic: 'Thông báo topic của khoá học',
-                            details: `${user.instructorName} vừa tạo thêm topic trong khoá học ${user.courseName} của thầy ấy`
-                        }
-                        NotificationService.addNotification(notification)
-                    })
+                            details: `${user.instructorName} vừa tạo thêm topic trong khoá học ${user.courseName} của thầy ấy`,
+                        };
+                        NotificationService.addNotification(notification);
+                    });
 
                     Promise.all([notifyToUser]).then((values) => {
                         return res.status(200).send('Tạo topic thành công');
                     });
-
-                })
+                });
             });
-
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
         }
     }
 
-// @route   GET api/notification/getCourseTopics
-// @desc    get All course topics
-// @access  Private
+    // @route   GET api/notification/getCourseTopics
+    // @desc    get All course topics
+    // @access  Private
     static async getCourseTopics(req, res) {
-        
         try {
             TopicService.getCourseTopics(req.params.courseId).then((data) => {
                 if (data.length == 0) {
@@ -68,5 +67,4 @@ module.exports = class ApiCourse {
             res.status(500).send('Server error');
         }
     }
-
-}
+};

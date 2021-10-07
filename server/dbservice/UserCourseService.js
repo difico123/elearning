@@ -65,7 +65,7 @@ module.exports = class UserCourseService {
         try {
             const respond = await new Promise((resolve, reject) => {
                 const query =
-                    'select uc.id, uc.course as courseId,c.name as courseName, c.instructor as instructorId, ' + 
+                    'select uc.id, uc.course as courseId,c.name as courseName, c.instructor as instructorId, ' +
                     'u.lastName as instructorName,uc.user as userId, uc.isComplete, uc.marks, uc.dateAdded from user_courses uc ' +
                     'join courses c on c.id = uc.course join users u on u.id = c.instructor where uc.course = ?';
 
