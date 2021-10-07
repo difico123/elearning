@@ -17,12 +17,13 @@ module.exports = class NotificationService {
         }
     }
 
-    static async getConversation(courseId) {
+    static async getNotification(userId) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'SELECT * FROM chats WHERE course = ? ';
+                const query = 'SELECT *, DATE_FORMAT(dateAdded, "ngày %d tháng %m năm %Y") as date FROM notifications ' +
+                'WHERE user = ? order by dateAdded desc';
 
-                pool.query(query, [courseId], (err, result) => {
+                pool.query(query, [userId], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
                 });

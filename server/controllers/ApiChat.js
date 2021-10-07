@@ -35,7 +35,7 @@ module.exports = class ApiChat {
                                         details = `${firstDetailsMsg} thầy/cô ấy`;
                                         break;
                                     case user.user:
-                                        details = `${firstDetailsMsg} mình`;
+                                        details = `${firstDetailsMsg} bạn`;
                                         break;
                                     default:
                                         details = `${firstDetailsMsg} ${chattedCourse[0].instructorName}`;

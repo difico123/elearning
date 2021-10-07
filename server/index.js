@@ -18,6 +18,7 @@ app.use('/api/user', require('./routes/user'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/course', require('./routes/course'));
 app.use('/api/userCourse', require('./routes/usercourse'));
+app.use('/api/notification', require('./routes/notification'));
 
 app.use((req, res) => {
     res.status(404).json({
