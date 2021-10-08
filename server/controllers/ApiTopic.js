@@ -23,11 +23,9 @@ module.exports = class ApiCourse {
 
                 UserCourseService.getCourseUsers(topic.course).then((users) => {
                     if (users.length === 0) {
-                        return res
-                            .status(400)
-                            .json({
-                                error: 'Không học sinh nào trong khoá học này',
-                            });
+                        return res.status(400).json({
+                            error: 'Không học sinh nào trong khoá học này',
+                        });
                     }
                     let notifyToUser = users.map((user) => {
                         let notification = {

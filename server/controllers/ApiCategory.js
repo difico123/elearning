@@ -1,4 +1,4 @@
-const CategoryService = require('../dbService/CategoryService')
+const CategoryService = require('../dbService/CategoryService');
 
 module.exports = class ApiNotification {
     // @route   GET api/category/get
@@ -8,9 +8,7 @@ module.exports = class ApiNotification {
         try {
             CategoryService.getCategory().then((data) => {
                 if (data.length == 0) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Rỗng' });
+                    return res.status(400).json({ error: 'Rỗng' });
                 }
                 res.status(200).json(data);
             });
@@ -19,5 +17,4 @@ module.exports = class ApiNotification {
             res.status(500).send('Server error');
         }
     }
-
 };

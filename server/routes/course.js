@@ -12,7 +12,10 @@ const validateInput = require('../middleware/errors/validateInput');
 // @access  Private
 router.post(
     '/create/:categoryId',
-    [check('name', 'Không được bỏ trống tên').not().isEmpty()],
+    [
+        check('name', 'Không được bỏ trống tên').not().isEmpty(),
+        check('des', 'Không được bỏ trống phần mô tả').not().isEmpty(),
+    ],
     auth,
     instructorAuth,
     validateInput,
@@ -22,12 +25,43 @@ router.post(
 // @route   PUT api/course/activate/:courseId
 // @desc    Activate course
 // @access  Private
-router.put('/activate/:courseId', auth, courseInstructorAuth, ApiCourse.activateCourse);
+router.put(
+    '/activate/:courseId',
+    auth,
+    courseInstructorAuth,
+    ApiCourse.activateCourse,
+);
 
 // @route   PUT api/course/suspend/:courseId
 // @desc    suspend course
 // @access  Private
-router.put('/suspend/:courseId', auth, courseInstructorAuth, ApiCourse.suspendCourse);
+router.put(
+    '/suspend/:courseId',
+    auth,
+    courseInstructorAuth,
+    ApiCourse.suspendCourse,
+);
+
+
+// @route   PUT api/course/edit/:courseId
+// @desc    edit course
+// @access  Private
+router.put(
+    '/edit/:courseId',
+    auth,
+    courseInstructorAuth,
+    ApiCourse.edit,
+);
+
+// @route   DELETE api/course/delete/:courseId
+// @desc    Delete course
+// @access  Private
+router.delete(
+    '/delete/:courseId',
+    auth,
+    courseInstructorAuth,
+    ApiCourse.delete,
+);
 
 // @route   GET api/course/instructorCourses
 // @desc    show instructor'courses

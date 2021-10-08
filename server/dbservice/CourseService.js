@@ -32,6 +32,23 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
+
+    static async deleteCourseById(id) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'DELETE FROM courses WHERE id = ?';
+
+                pool.query(query, [id], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result.affectedRows);
+                });
+            });
+            return response === 1 ? true : false;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
     static async CourseStatus(instructorId, courseId, courseStatus) {
         try {
             const response = await new Promise((resolve, reject) => {
@@ -77,7 +94,7 @@ module.exports = class CourseService {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query =
-                    'SELECT courses.id, courses.name, '+
+                    'SELECT courses.id, courses.name, courses.des, ' +
                     'categories.id as categoryId, categories.name as categoryName, courses.instructor,' +
                     'concat(users.firstName, " " , users.middleName, " ", users.lastName) as fullName, ' +
                     'users.email FROM courses ' +
@@ -115,10 +132,10 @@ module.exports = class CourseService {
         try {
             const respond = await new Promise((resolve, reject) => {
                 const query =
-                    'SELECT categories.id as categoryId, categories.name as categoryIdName, courses.* FROM courses '+
-                    'join categories on categories.id = courses.category '+
+                    'SELECT categories.id as categoryId, categories.name as categoryIdName, courses.* FROM courses ' +
+                    'join categories on categories.id = courses.category ' +
                     'WHERE courses.id = ? and courses.instructor = ?';
-                    
+
                 pool.query(query, [courseId, instructorId], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
