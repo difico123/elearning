@@ -18,6 +18,7 @@ app.use('/api/user', require('./routes/user'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/topic', require('./routes/topic'));
 app.use('/api/course', require('./routes/course'));
+app.use('/api/category', require('./routes/category'));
 app.use('/api/userCourse', require('./routes/usercourse'));
 app.use('/api/notification', require('./routes/notification'));
 

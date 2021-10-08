@@ -2,13 +2,16 @@ const CourseService = require('../dbservice/CourseService');
 const UserCourseService = require('../dbservice/UserCourseService');
 
 module.exports = class ApiCourse {
+
     // @route   POST api/course/create
     // @desc    Create course
     // @access  Private
     static async createCourse(req, res) {
+        
         const course = {
             instructor: req.user.id,
             name: req.body.name,
+            category: req.params.categoryId
         };
         try {
             CourseService.addCourse(course).then((created) => {
@@ -30,7 +33,7 @@ module.exports = class ApiCourse {
     // @access  Private
     static async activateCourse(req, res) {
         const instructorId = req.user.id;
-        const courseId = req.params.id;
+        const courseId = req.params.courseId;
         const activeStatus = 1;
         try {
             CourseService.CourseStatus(
@@ -56,7 +59,7 @@ module.exports = class ApiCourse {
     // @access  Private
     static async suspendCourse(req, res) {
         const instructorId = req.user.id;
-        const courseId = req.params.id;
+        const courseId = req.params.courseId;
         const suspendStatus = 0;
         try {
             CourseService.CourseStatus(
@@ -117,6 +120,7 @@ module.exports = class ApiCourse {
             res.status(500).send('Server error');
         }
     }
+
     // @route   GET api/course/show
     // @desc    show instructor'courses
     // @access  Private
@@ -165,7 +169,7 @@ module.exports = class ApiCourse {
                     if (data.length == 0) {
                         return res
                             .status(400)
-                            .json({ error: 'Không có khoá học nào' });
+                            .json({ error: 'Không có học sinh nào trong khoá học' });
                     }
                     res.status(200).json(data);
                 },

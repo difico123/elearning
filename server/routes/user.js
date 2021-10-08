@@ -59,20 +59,20 @@ router.put(
     ApiUser.editInfo,
 );
 
-// @route   DELETE api/user/delete/:id
+// @route   DELETE api/user/delete/:userId
 // @desc    Delete user by admin
 // @access  Private
-router.delete('/delete/:id', auth, admin, ApiUser.deleteUser);
+router.delete('/delete/:userId', auth, admin, ApiUser.deleteUser);
 
 // @route   PUT api/user/beInstructor
 // @desc    to be an instructor
 // @access  Private
 router.put('/beAnInstructor', auth, ApiUser.beAnInstructor);
 
-// @route   GET api/user/showAvt/:id
+// @route   GET api/user/showAvt/:userId
 // @desc    show user avatar by user id
 // @access  Public
-router.get('/showAvt/:id', ApiUser.showAvt);
+router.get('/showAvt/:userId', ApiUser.showAvt);
 
 // @route   PUT api/user/editPw
 // @desc    edit user password

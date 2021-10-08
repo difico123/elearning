@@ -178,8 +178,8 @@ module.exports = class ApiUser {
     static async deleteUser(req, res) {
         try {
             //get user information by id
-            let { id } = req.params;
-            UserService.deleteUserById(id).then((data) => {
+            let { userId } = req.params;
+            UserService.deleteUserById(userId).then((data) => {
                 if (!data) {
                     return res.status(400).json({
                         error: 'Không xoá được user',
@@ -223,8 +223,8 @@ module.exports = class ApiUser {
     static async showAvt(req, res) {
         try {
             //get user information by id
-            let { id } = req.params;
-            UserService.showAvt(id).then((data) => {
+            let { userId } = req.params;
+            UserService.showAvt(userId).then((data) => {
                 if (data.length === 0) {
                     return res.status(400).json({
                         error: 'Không tìm thấy thông tin của user',

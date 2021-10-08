@@ -11,7 +11,7 @@ const validateInput = require('../middleware/errors/validateInput');
 // @desc    Create course
 // @access  Private
 router.post(
-    '/create',
+    '/create/:categoryId',
     [check('name', 'Không được bỏ trống tên').not().isEmpty()],
     auth,
     instructorAuth,
@@ -19,15 +19,15 @@ router.post(
     ApiCourse.createCourse,
 );
 
-// @route   PUT api/course/activate/:id
+// @route   PUT api/course/activate/:courseId
 // @desc    Activate course
 // @access  Private
-router.put('/activate/:id', auth, instructorAuth, ApiCourse.activateCourse);
+router.put('/activate/:courseId', auth, courseInstructorAuth, ApiCourse.activateCourse);
 
-// @route   PUT api/course/suspend/:id
+// @route   PUT api/course/suspend/:courseId
 // @desc    suspend course
 // @access  Private
-router.put('/suspend/:id', auth, instructorAuth, ApiCourse.suspendCourse);
+router.put('/suspend/:courseId', auth, courseInstructorAuth, ApiCourse.suspendCourse);
 
 // @route   GET api/course/instructorCourses
 // @desc    show instructor'courses

@@ -23,7 +23,7 @@ module.exports = class UserCourseService {
                 const query =
                     'SELECT uc.id, u.role as userRole, uc.isComplete, uc.marks,c.id as courseId, c.name, uc.dateAdded as enrollDate ,' +
                     'c.instructor , concat(u.firstName," ", u.middleName, " ", u.lastName) as fullName, ' +
-                    'u.email,u.address , u.city,u.phoneNumber ' +
+                    'u.email ,u.address , u.city,u.phoneNumber ' +
                     'FROM user_courses uc ' +
                     'join courses c on c.id = uc.course ' +
                     'join users u on c.instructor = u.id ' +
@@ -68,7 +68,6 @@ module.exports = class UserCourseService {
                     'select uc.id, uc.course as courseId,c.name as courseName, c.instructor as instructorId, ' +
                     'u.lastName as instructorName,uc.user as userId, uc.isComplete, uc.marks, uc.dateAdded from user_courses uc ' +
                     'join courses c on c.id = uc.course join users u on u.id = c.instructor where uc.course = ?';
-
                 pool.query(query, [courseId], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);

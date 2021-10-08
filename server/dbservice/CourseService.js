@@ -56,10 +56,11 @@ module.exports = class CourseService {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query =
-                    'SELECT courses.*, ' +
+                    'SELECT courses.*, categories.name as categoryName, ' +
                     'concat(users.firstName, " " , users.middleName, " ", users.lastName) as instructorFullName, ' +
                     'users.email as instructorEmail FROM courses ' +
                     'join users on users.id = courses.instructor ' +
+                    'join categories on categories.id = courses.category ' +
                     'WHERE instructor = ?';
 
                 pool.query(query, [id], (err, result) => {
@@ -76,10 +77,12 @@ module.exports = class CourseService {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query =
-                    'SELECT courses.id, courses.name, courses.instructor, ' +
+                    'SELECT courses.id, courses.name, '+
+                    'categories.id as categoryId, categories.name as categoryName, courses.instructor,' +
                     'concat(users.firstName, " " , users.middleName, " ", users.lastName) as fullName, ' +
                     'users.email FROM courses ' +
                     'join users on users.id = courses.instructor ' +
+                    'join categories on categories.id = courses.category ' +
                     'where verified = 1';
                 pool.query(query, (err, result) => {
                     if (err) reject(new Error(err.message));
@@ -112,8 +115,10 @@ module.exports = class CourseService {
         try {
             const respond = await new Promise((resolve, reject) => {
                 const query =
-                    'SELECT * FROM courses WHERE id = ? and instructor = ?';
-
+                    'SELECT categories.id as categoryId, categories.name as categoryIdName, courses.* FROM courses '+
+                    'join categories on categories.id = courses.category '+
+                    'WHERE courses.id = ? and courses.instructor = ?';
+                    
                 pool.query(query, [courseId, instructorId], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);

@@ -89,6 +89,7 @@ module.exports.initialize = async function () {
             'course INT NOT NULL, ' +
             'isComplete INT NOT NULL DEFAULT 0, ' +
             'marks INT, ' +
+            'rating enum("0","1","2","3","4","5") DEFAULT "0", ' +
             'dateAdded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
             'lastUpdated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, ' +
             'UNIQUE(user, course), ' +
