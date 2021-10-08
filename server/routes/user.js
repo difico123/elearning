@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
+const validateInput = require('../middleware/errors/validateInput');
 const ApiUser = require('../controllers/ApiUser');
 const auth = require('../middleware/auth/auth');
 const admin = require('../middleware/auth/admin.auth');
-const validateInput = require('../middleware/errors/validateInput');
 
 // @route   GET api/user/info
 // @desc    User information

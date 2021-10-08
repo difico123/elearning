@@ -42,6 +42,35 @@ module.exports = class ApiCourse {
         }
     }
 
+    // @route   POST api/userCourse/rate/:courseId
+    // @desc    rate the course
+    // @access  private
+    static async rate(req, res) {
+        let rating = parseInt(req.body.rating);
+        
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({ error: "Bạn phải đánh giá khoá học từ 1 - 5"})
+        }
+        let userCourse = {
+            rating: req.body.rating,
+            user: req.user.id,
+            course: req.params.courseId,
+        };
+        try {
+            UserCourseService.update(userCourse).then((updated) => {
+                if (!updated) {
+                    return res
+                        .status(400)
+                        .json({ error: 'Bạn chưa đánh giá khoá học' });
+                }
+                res.status(200).send('Bạn đã đánh giá khoá học');
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+
     // @route   Get api/userCourse/all
     // @desc    get the list of user courses
     // @access  private

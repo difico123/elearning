@@ -83,17 +83,15 @@ module.exports = class ApiCourse {
     // @desc    edit course
     // @access  Private
     static async edit(req, res) {
-
         const newCourse = {
             instructor: req.user.id,
             name: req.body.name,
             des: req.body.des,
-            id: req.params.courseId
-        }
+            id: req.params.courseId,
+        };
 
         try {
-            CourseService.updateCourse(newCourse
-            ).then((updated) => {
+            CourseService.updateCourse(newCourse).then((updated) => {
                 if (!updated) {
                     return res
                         .status(400)
@@ -126,7 +124,7 @@ module.exports = class ApiCourse {
             res.status(500).send('Server error');
         }
     }
-    
+
     // @route   GET api/course/show
     // @desc    show instructor'courses
     // @access  Private
@@ -214,11 +212,9 @@ module.exports = class ApiCourse {
             UserCourseService.getCourseUsers(req.params.courseId).then(
                 (data) => {
                     if (data.length == 0) {
-                        return res
-                            .status(400)
-                            .json({
-                                error: 'Không có học sinh nào trong khoá học',
-                            });
+                        return res.status(400).json({
+                            error: 'Không có học sinh nào trong khoá học',
+                        });
                     }
                     res.status(200).json(data);
                 },

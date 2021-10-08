@@ -42,16 +42,10 @@ router.put(
     ApiCourse.suspendCourse,
 );
 
-
 // @route   PUT api/course/edit/:courseId
 // @desc    edit course
 // @access  Private
-router.put(
-    '/edit/:courseId',
-    auth,
-    courseInstructorAuth,
-    ApiCourse.edit,
-);
+router.put('/edit/:courseId', auth, courseInstructorAuth, ApiCourse.edit);
 
 // @route   DELETE api/course/delete/:courseId
 // @desc    Delete course

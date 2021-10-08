@@ -16,6 +16,27 @@ module.exports = class UserCourseService {
             console.log(error);
         }
     }
+    static async update(userCourse) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                let query =
+                    'UPDATE user_courses SET ? WHERE user = ? and course = ?';
+                pool.query(
+                    query,
+                    [userCourse, userCourse.user, userCourse.course],
+                    (err, result) => {
+                        if (err) reject(new Error(err.message));
+                        resolve(result.affectedRows);
+                    },
+                );
+            });
+
+            return response === 1 ? true : false;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
 
     static async getUserCourseByUserId(id) {
         try {
