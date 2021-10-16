@@ -2,10 +2,11 @@ const bcrypt = require('bcryptjs'); // encrypt password
 const UserService = require('../dbservice/UserService');
 const jwt = require('jsonwebtoken');
 const formidable = require('formidable');
+const cloudinary = require('../config/cloud/cloudinary');
 const fs = require('fs');
 
 module.exports = class ApiUser {
-    // @route   POST api/user/register
+    // @route   POST api/auth/register
     // @desc    Register user
     // @access  Public
     static async register(req, res) {
@@ -26,13 +27,29 @@ module.exports = class ApiUser {
                 let { password } = user;
                 user.password = await bcrypt.hash(password, salt);
 
+                if (req.file !== undefined) {
+                    const result = await cloudinary.uploader.upload(
+                        req.file.path,
+                        {
+                            folder: 'avatars',
+                            width: 150,
+                            crop: 'scale',
+                        },
+                    );
+                    user.imageUrl = `${result.secure_url} ${result.public_id}`;
+                }
+
                 UserService.addUser(user).then((created) => {
                     if (!created) {
-                        return res
-                            .status(400)
-                            .send('Chưa đăng kí được tài khoản');
+                        return res.status(400).json({
+                            error: true,
+                            msg: 'Chưa đăng kí được tài khoản',
+                        });
                     }
-                    res.status(200).send('Đăng kí tài khoản thành công');
+                    res.status(200).json({
+                        error: false,
+                        msg: 'Đăng kí tài khoản thành công',
+                    });
                 });
             });
         } catch (error) {
@@ -40,7 +57,7 @@ module.exports = class ApiUser {
         }
     }
 
-    // @route   POST api/user/login
+    // @route   POST api/auth/login
     // @desc    login user
     // @access  Public
     static async login(req, res) {
@@ -62,7 +79,8 @@ module.exports = class ApiUser {
                     );
                     if (!isMatch) {
                         return res.status(404).json({
-                            error: 'Mật khẩu của bạn không chính xác',
+                            error: true,
+                            msg: 'Mật khẩu của bạn không chính xác',
                         });
                     }
                     //payload for jwt
@@ -80,9 +98,26 @@ module.exports = class ApiUser {
                         },
                         (err, token) => {
                             if (err) throw err;
-                            res.json({
-                                token,
-                            });
+
+                            const options = {
+                                expires: new Date(
+                                    Date.now() +
+                                        process.env.COOKIE_EXPIRE *
+                                            24 *
+                                            60 *
+                                            60 *
+                                            1000,
+                                ),
+                                httpOnly: true,
+                            };
+
+                            return res
+                                .status(200)
+                                .cookie('token', token, options)
+                                .json({
+                                    error: false,
+                                    token,
+                                });
                         },
                     );
                 } catch (error) {
@@ -91,6 +126,19 @@ module.exports = class ApiUser {
                 }
             })
             .catch((err) => console.log(err));
+    }
+    // @route   POST api/auth/logout
+    // @desc    logout user
+    // @access  Public
+    static logout(req, res) {
+        res.cookie('token', null, {
+            expires: new Date(Date.now()),
+            httpOnly: true,
+        });
+        res.status(200).json({
+            error: false,
+            msg: 'Logged Out',
+        });
     }
 
     // @route   GET api/user/info
@@ -101,7 +149,10 @@ module.exports = class ApiUser {
             //get user information by id
             let { id } = req.user;
             UserService.getUserInfoById(id).then((data) => {
-                res.json(data);
+                res.json({
+                    error: false,
+                    data,
+                });
             });
         } catch (error) {
             console.log(error.message);
@@ -113,80 +164,95 @@ module.exports = class ApiUser {
     // @desc    Edit user information
     // @access  Private
     static async editInfo(req, res) {
-        const form = new formidable.IncomingForm();
-        form.keepExtensions = true;
-        form.uploadDir = './uploads/users';
-        form.maxFieldsSize = 1000000;
-        form.maxFileSize = 1000000;
-        form.multiples = false;
+        let { firstName, middleName, lastName, phoneNumber, address, city } =
+            req.body;
 
-        let { id } = req.user;
+        let newUser = {
+            id: req.user.id,
+            firstName: firstName,
+            lastName: lastName,
+            middleName: middleName,
+            phoneNumber: phoneNumber,
+            address: address,
+            city: city,
+        };
 
-        UserService.getUserInfoById(id)
-            .then((users) => {
-                let { imageUrl } = users[0];
-
-                form.parse(req, (err, fields, files) => {
-                    if (err) {
-                        return res.status(400).json({
-                            error: 'File của bạn bị lỗi, có thể do kích thước file lớn hơn 1MB',
-                        });
+        try {
+            if (req.file !== undefined) {
+                await UserService.getUserInfoById(req.user.id).then(async(data) => {
+                    if (data[0].imageUrl) {
+                        await cloudinary.uploader.destroy(
+                            data[0].imageUrl.split(' ')[1],
+                        );
                     }
-                    let newUser = fields;
-                    newUser.id = id;
 
-                    if (files['imageUrl']) {
-                        const { size, type, path } = files['imageUrl'];
-                        if (size !== 0) {
-                            if (
-                                type != 'image/jpeg' &&
-                                type != 'image/jpg' &&
-                                type != 'image/png'
-                            ) {
-                                fs.unlinkSync(path);
-                                return res.status(400).json({
-                                    error: 'Image type is not allowed!',
-                                });
-                            }
-                            // check if exist file path and delete file
-                            if (fs.existsSync(imageUrl)) {
-                                fs.unlinkSync(imageUrl);
-                                console.log(`successfully deleted ${imageUrl}`);
-                            }
-                            newUser.imageUrl = path;
-                        }
-                    }
-                    UserService.updateUserInfo(newUser).then((updated) => {
-                        if (!updated) {
-                            return res.status(400).json({
-                                error: 'Không sửa được thông tin của bạn ',
-                            });
-                        }
-                        res.status(200).send('Đã sửa thông tin của bạn ');
-                    });
+                    const result = await cloudinary.uploader.upload(
+                        req.file.path,
+                        {
+                            folder: 'avatars',
+                            width: 150,
+                            crop: 'scale',
+                        },
+                    );
+                    newUser.imageUrl = `${result.secure_url} ${result.public_id}`;
                 });
-            })
-            .catch((err) => {
-                console.log(err.message);
-                res.status(500).send('Server error');
+            }
+
+            UserService.updateUserInfo(newUser).then((updated) => {
+                if (!updated) {
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Không sửa được thông tin của bạn ',
+                    });
+                }
+                res.status(200).json({
+                    error: false,
+                    msg: 'Đã sửa thông tin của bạn',
+                });
             });
+        } catch (error) {
+            console.log(err.message);
+            res.status(500).send('Server error');
+        }
     }
 
-    // @route   DELETE api/user/delete/:id
+    // @route   DELETE api/user/delete/:userId
     // @desc    Delete user by admin
     // @access  Private
     static async deleteUser(req, res) {
         try {
             //get user information by id
             let { userId } = req.params;
-            UserService.deleteUserById(userId).then((data) => {
-                if (!data) {
-                    return res.status(400).json({
-                        error: 'Không xoá được user',
+            let userPromise = UserService.getUserInfoById(userId).then(
+                async (data) => {
+                    if (!data[0]) {
+                        return res.status(400).json({
+                            error: true,
+                            msg: 'Không tìm thấy user',
+                        });
+                    }
+                    if (data[0].imageUrl) {
+                        await cloudinary.uploader.destroy(
+                            data[0].imageUrl.split(' ')[1],
+                        );
+                    }
+                },
+            );
+            let deletePromise = UserService.deleteUserById(userId).then(
+                (data) => {
+                    if (!data) {
+                        return res.status(400).json({
+                            error: 'Không xoá được user',
+                        });
+                    }
+                    return res.status(200).json({
+                        error: false,
+                        msg: 'Đã xoá user',
                     });
-                }
-                res.status(200).send('Đã xoá user ');
-            });
+                },
+            );
+
+            Promise.all([userPromise, deletePromise]);
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
@@ -205,10 +271,14 @@ module.exports = class ApiUser {
                 UserService.updateUserInfo(data[0]).then((updated) => {
                     if (!updated) {
                         return res.status(400).json({
-                            error: 'Bạn chưa trở thành instructor',
+                            error: true,
+                            msg: 'Bạn chưa trở thành instructor',
                         });
                     }
-                    res.status(200).send('Bạn đã trở thành instructor');
+                    res.status(200).json({
+                        error: false,
+                        msg: 'Bạn đã trở thành instructor',
+                    });
                 });
             });
         } catch (error) {
@@ -217,7 +287,7 @@ module.exports = class ApiUser {
         }
     }
 
-    // @route   GET api/user/showAvt/:id
+    // @route   GET api/user/showAvt/:userId
     // @desc    show user avatar
     // @access  Public
     static async showAvt(req, res) {
@@ -227,21 +297,21 @@ module.exports = class ApiUser {
             UserService.showAvt(userId).then((data) => {
                 if (data.length === 0) {
                     return res.status(400).json({
-                        error: 'Không tìm thấy thông tin của user',
+                        error: true,
+                        msg: 'Không tìm thấy thông tin của user',
                     });
                 }
                 let { imageUrl } = data[0];
                 if (!imageUrl) {
                     return res.status(400).json({
-                        error: 'Không có dữ liệu đường dẫn ảnh',
+                        error: true,
+                        msg: 'Không có dữ liệu đường dẫn ảnh',
                     });
                 }
-                fs.readFile(imageUrl, function (err, imgData) {
-                    if (err) {
-                        return res.send(err);
-                    }
-                    res.writeHead(200, { 'Content-Type': 'image/jpeg' });
-                    res.end(imgData);
+
+                return res.status(200).json({
+                    error: false,
+                    imageUrl: imageUrl.split(' ')[0],
                 });
             });
         } catch (error) {
@@ -266,7 +336,8 @@ module.exports = class ApiUser {
                 );
                 if (!isMatch) {
                     return res.status(404).json({
-                        error: 'Mật khẩu của bạn không chính xác',
+                        error: true,
+                        msg: 'Mật khẩu của bạn không chính xác',
                     });
                 }
                 const salt = await bcrypt.genSalt(10);
@@ -277,12 +348,14 @@ module.exports = class ApiUser {
                 user.password = await bcrypt.hash(user.password, salt);
                 UserService.updateUserInfo(user).then((updated) => {
                     return updated
-                        ? res
-                              .status(200)
-                              .json('Mật khẩu của bạn đã được cập nhật')
-                        : res
-                              .status(400)
-                              .json({ error: 'Mật khẩu chưa được cập nhật' });
+                        ? res.status(200).json({
+                              error: false,
+                              msg: 'Mật khẩu của bạn đã được cập nhật',
+                          })
+                        : res.status(400).json({
+                              error: true,
+                              msg: 'Mật khẩu chưa được cập nhật',
+                          });
                 });
             });
         } catch (error) {

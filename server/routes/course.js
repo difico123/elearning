@@ -6,12 +6,15 @@ const auth = require('../middleware/auth/auth');
 const { check } = require('express-validator');
 const ApiCourse = require('../controllers/ApiCourse');
 const validateInput = require('../middleware/errors/validateInput');
+const validate = require('express-validator');
+const upload = require('../utils/multer');
 
-// @route   POST api/course/create
+// @route   POST api/course/create/:categoryId
 // @desc    Create course
 // @access  Private
 router.post(
     '/create/:categoryId',
+    upload.single('courseImage'),
     [
         check('name', 'Không được bỏ trống tên').not().isEmpty(),
         check('des', 'Không được bỏ trống phần mô tả').not().isEmpty(),
@@ -45,7 +48,13 @@ router.put(
 // @route   PUT api/course/edit/:courseId
 // @desc    edit course
 // @access  Private
-router.put('/edit/:courseId', auth, courseInstructorAuth, ApiCourse.edit);
+router.put(
+    '/edit/:courseId',
+    upload.single('courseImage'),
+    auth,
+    courseInstructorAuth,
+    ApiCourse.edit,
+);
 
 // @route   DELETE api/course/delete/:courseId
 // @desc    Delete course
@@ -71,6 +80,11 @@ router.get(
     instructorAuth,
     ApiCourse.getSingleCourse,
 );
+
+// @route   GET api/course/image/:courseId
+// @desc    show course image
+// @access  Public
+router.get('/image/:courseId', ApiCourse.showImg);
 
 // @route   GET api/course/showAll
 // @desc    Show all courses

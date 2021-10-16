@@ -2,11 +2,12 @@ const jwt = require('jsonwebtoken');
 
 module.exports = function (req, res, next) {
     // Get token from header
-    const token = req.headers['authorization'];
+    const { token } = req.cookies;
 
     //Check if no token
     if (!token) {
         return res.status(401).json({
+            error: 'true',
             msg: 'No token, access denied',
         });
     }

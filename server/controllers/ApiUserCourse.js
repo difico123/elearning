@@ -47,9 +47,11 @@ module.exports = class ApiCourse {
     // @access  private
     static async rate(req, res) {
         let rating = parseInt(req.body.rating);
-        
+
         if (rating < 1 || rating > 5) {
-            return res.status(400).json({ error: "Bạn phải đánh giá khoá học từ 1 - 5"})
+            return res
+                .status(400)
+                .json({ error: 'Bạn phải đánh giá khoá học từ 1 - 5' });
         }
         let userCourse = {
             rating: req.body.rating,
