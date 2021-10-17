@@ -9,9 +9,9 @@ const admin = require('../middleware/auth/admin.auth');
 // @access  Private
 router.delete('/deleteUser/:userId', auth, admin, ApiAdmin.deleteUser);
 
-     // @route   DELETE api/admin/deleteCourse/:courseId
-    // @desc    Delete course by admin
-    // @access  Private
+// @route   DELETE api/admin/deleteCourse/:courseId
+// @desc    Delete course by admin
+// @access  Private
 router.delete('/deleteCourse/:courseId', auth, admin, ApiAdmin.deleteCourse);
 
 // @route   GET api/user/listUsers

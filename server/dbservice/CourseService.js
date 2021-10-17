@@ -48,7 +48,7 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
-    
+
     static async deleteIntructorCourses(instructorId) {
         try {
             const response = await new Promise((resolve, reject) => {

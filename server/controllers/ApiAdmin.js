@@ -1,9 +1,9 @@
 const UserService = require('../dbservice/UserService');
 const CourseService = require('../dbservice/CourseService');
-const cloudinary = require('cloudinary')
+const cloudinary = require('cloudinary');
 
 module.exports = class ApiUser {
-     // @route   DELETE api/admin/delete/:userId
+    // @route   DELETE api/admin/delete/:userId
     // @desc    Delete user by admin
     // @access  Private
     static async deleteUser(req, res) {
@@ -24,16 +24,18 @@ module.exports = class ApiUser {
                         );
                     }
 
-                    if(data[0].role === 1) {
-                        CourseService.deleteIntructorCourses(data[0].id).then(deleted =>{
-                            if(!deleted) {
-                                return res.status(400).json({
-                                    error: true,
-                                    msg: 'Chưa xoá khoá học của instructor',
-                                });
-                            }
-                            console.log('đã xoá khoá học của instructor');
-                        })
+                    if (data[0].role === 1) {
+                        CourseService.deleteIntructorCourses(data[0].id).then(
+                            (deleted) => {
+                                if (!deleted) {
+                                    return res.status(400).json({
+                                        error: true,
+                                        msg: 'Chưa xoá khoá học của instructor',
+                                    });
+                                }
+                                console.log('đã xoá khoá học của instructor');
+                            },
+                        );
                     }
                 },
             );
@@ -58,7 +60,7 @@ module.exports = class ApiUser {
         }
     }
 
-     // @route   DELETE api/admin/deleteCourse/:courseId
+    // @route   DELETE api/admin/deleteCourse/:courseId
     // @desc    Delete course by admin
     // @access  Private
     static async deleteCourse(req, res) {
@@ -78,7 +80,6 @@ module.exports = class ApiUser {
                             data[0].imageUrl.split(' ')[1],
                         );
                     }
-
                 },
             );
             let deletePromise = CourseService.deleteCourseById(courseId).then(
@@ -102,37 +103,41 @@ module.exports = class ApiUser {
         }
     }
 
-// @route   GET api/user/listUsers
-// @desc    get users by admin
-// @access  Private
+    // @route   GET api/user/listUsers
+    // @desc    get users by admin
+    // @access  Private
     static async listUsers(req, res) {
         try {
-            UserService.listUsers().then(data => {
-                if(data.length == 0) {
-                    return res.status(400).json({error: true, msg: 'Không có user nào' });
+            UserService.listUsers().then((data) => {
+                if (data.length == 0) {
+                    return res
+                        .status(400)
+                        .json({ error: true, msg: 'Không có user nào' });
                 }
-                return res.status(200).json({error: true, data });
-            })
+                return res.status(200).json({ error: true, data });
+            });
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
         }
     }
 
-// @route   GET api/user/listCourses
-// @desc    get listcourses by admin
-// @access  Private
+    // @route   GET api/user/listCourses
+    // @desc    get listcourses by admin
+    // @access  Private
     static async listCourses(req, res) {
         try {
-            CourseService.getAll().then(data => {
-                if(data.length == 0) {
-                    return res.status(400).json({error: true, msg: 'Không có khoá học nào' });
+            CourseService.getAll().then((data) => {
+                if (data.length == 0) {
+                    return res
+                        .status(400)
+                        .json({ error: true, msg: 'Không có khoá học nào' });
                 }
-                return res.status(200).json({error: true, data });
-            })
+                return res.status(200).json({ error: true, data });
+            });
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
         }
     }
- }
+};

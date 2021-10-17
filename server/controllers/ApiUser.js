@@ -1,9 +1,9 @@
 const bcrypt = require('bcryptjs'); // encrypt password
 const UserService = require('../dbservice/UserService');
 const jwt = require('jsonwebtoken');
-const formidable = require('formidable');
 const cloudinary = require('../config/cloud/cloudinary');
-const fs = require('fs');
+const crypto = require('crypto');
+const sendEmail = require('../utils/sendmail');
 
 module.exports = class ApiUser {
     // @route   POST api/auth/register
@@ -140,6 +140,144 @@ module.exports = class ApiUser {
             msg: 'Logged Out',
         });
     }
+    // @route   POST api/auth/forgotPassword
+    // @desc    forgot user Password
+    // @access  Public
+    static forgotPassword(req, res) {
+        let { email } = req.body;
+
+        UserService.getUserByEmail(email).then((data) => {
+            let user = {
+                id: data[0].id,
+            };
+            if (!user) {
+                return res
+                    .status(400)
+                    .json({ error: true, msg: 'Email của bạn không đúng' });
+            }
+
+            // Generating Password Reset Token
+            const resetToken = crypto.randomBytes(20).toString('hex');
+
+            // Hashing and adding resetPasswordToken to user
+            user.resetPasswordToken = crypto
+                .createHash('sha256')
+                .update(resetToken)
+                .digest('hex');
+
+            let dat = new Date();
+            dat.setMinutes(dat.getMinutes() + 1);
+            user.resetPasswordExpire = dat;
+
+            UserService.updateUserInfo(user).then(async (updated) => {
+                if (!updated) {
+                    return res
+                        .status(400)
+                        .json({ error: true, msg: 'chưa cập nhật được token' });
+                }
+                // return res.status(200).json({error: false, user})
+
+                const resetPasswordUrl = `${req.protocol}://${req.get(
+                    'host',
+                )}/api/auth/resetPassword/${resetToken}`;
+
+                const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
+
+                try {
+                    await sendEmail({
+                        email: email,
+                        subject: `Elearning Password Recovery`,
+                        message,
+                    });
+
+                    return res.status(200).json({
+                        error: false,
+                        message: `Email sent to ${email} successfully`,
+                    });
+                } catch (error) {
+                    user.resetPasswordToken = null;
+                    user.resetPasswordExpire = null;
+
+                    UserService.updateUserInfo(user).then(async (updated) => {
+                        if (!updated) {
+                            return res.status(400).json({
+                                error: true,
+                                msg: 'chưa cập nhật được token là null',
+                            });
+                        }
+                        return res.status(200).json({
+                            error: false,
+                            msg: 'chưa gửi được email nhưng dù sao cũng ok',
+                        });
+                    });
+                }
+            });
+        });
+    }
+
+    // @route   POST api/auth/resetPassword/:token
+    // @desc    reset user Password
+    // @access  Public
+    static resetPassword(req, res) {
+        let { newPassword, confirmPassword } = req.body;
+        let { token } = req.params;
+
+        // creating token hash
+        const resetPasswordToken = crypto
+            .createHash('sha256')
+            .update(token)
+            .digest('hex');
+
+        UserService.getUserByResetPasswordToken(resetPasswordToken).then(
+            async (data) => {
+                if (!data[0]) {
+                    return res
+                        .status(400)
+                        .json({ error: true, msg: 'token của bạn không đúng' });
+                }
+                let dat = new Date();
+                if (data[0].resetPasswordExpire < dat) {
+                    return res
+                        .status(400)
+                        .json({ error: true, msg: 'token đã hết hạn' });
+                }
+                let user = {
+                    id: data[0].id,
+                };
+                if (newPassword !== confirmPassword) {
+                    return res
+                        .status(400)
+                        .json({
+                            error: true,
+                            msg: 'Mật khẩu mới và mật khẩu xác nhận của bạn không khớp',
+                        });
+                }
+
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(newPassword, salt);
+                user.resetPasswordExpire = null;
+                user.resetPasswordToken = null;
+
+                UserService.updateUserInfo(user).then((updated) => {
+                    if (!updated) {
+                        return res
+                            .status(400)
+                            .json({
+                                error: true,
+                                msg: 'mật khẩu mới chưa được cập nhật',
+                            });
+                    }
+
+                    return res
+                        .status(200)
+                        .json({
+                            error: false,
+                            msg: 'mật khẩu của bạn đã được đổi thành công',
+                        });
+                });
+            },
+        );
+    }
 
     // @route   GET api/user/info
     // @desc    Get user information
@@ -179,23 +317,25 @@ module.exports = class ApiUser {
 
         try {
             if (req.file !== undefined) {
-                await UserService.getUserInfoById(req.user.id).then(async(data) => {
-                    if (data[0].imageUrl) {
-                        await cloudinary.uploader.destroy(
-                            data[0].imageUrl.split(' ')[1],
-                        );
-                    }
+                await UserService.getUserInfoById(req.user.id).then(
+                    async (data) => {
+                        if (data[0].imageUrl) {
+                            await cloudinary.uploader.destroy(
+                                data[0].imageUrl.split(' ')[1],
+                            );
+                        }
 
-                    const result = await cloudinary.uploader.upload(
-                        req.file.path,
-                        {
-                            folder: 'avatars',
-                            width: 150,
-                            crop: 'scale',
-                        },
-                    );
-                    newUser.imageUrl = `${result.secure_url} ${result.public_id}`;
-                });
+                        const result = await cloudinary.uploader.upload(
+                            req.file.path,
+                            {
+                                folder: 'avatars',
+                                width: 150,
+                                crop: 'scale',
+                            },
+                        );
+                        newUser.imageUrl = `${result.secure_url} ${result.public_id}`;
+                    },
+                );
             }
 
             UserService.updateUserInfo(newUser).then((updated) => {
@@ -215,8 +355,6 @@ module.exports = class ApiUser {
             res.status(500).send('Server error');
         }
     }
-
-   
 
     // @route   PUT api/user/beAnInstructor
     // @desc    to be an beIntructor

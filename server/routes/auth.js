@@ -42,4 +42,14 @@ router.post(
 // @access  private
 router.get('/logout', ApiUser.logout);
 
+// @route   POST api/auth/forgotPassword
+// @desc    forgot user password
+// @access  Public
+router.post('/forgotPassword', ApiUser.forgotPassword);
+
+// @route   POST api/auth/resetPassword/:token
+// @desc    reset user password
+// @access  Public
+router.post('/resetPassword/:token', ApiUser.resetPassword);
+
 module.exports = router;

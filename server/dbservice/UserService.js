@@ -48,6 +48,22 @@ module.exports = class UserService {
             console.log(error);
         }
     }
+    static async getUserByResetPasswordToken(resetPasswordToken) {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query =
+                    'SELECT * FROM users WHERE resetPasswordToken = ?';
+
+                pool.query(query, [resetPasswordToken], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     static async updateUserInfo(user) {
         try {
