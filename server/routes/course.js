@@ -6,7 +6,6 @@ const auth = require('../middleware/auth/auth');
 const { check } = require('express-validator');
 const ApiCourse = require('../controllers/ApiCourse');
 const validateInput = require('../middleware/errors/validateInput');
-const validate = require('express-validator');
 const upload = require('../utils/multer');
 
 // @route   POST api/course/create/:categoryId

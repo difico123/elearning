@@ -97,4 +97,20 @@ module.exports = class UserService {
             console.log(error);
         }
     }
+
+    static async listUsers() {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM users where role != 2';
+
+                pool.query(query, (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

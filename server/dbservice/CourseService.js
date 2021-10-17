@@ -48,6 +48,22 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
+    
+    static async deleteIntructorCourses(instructorId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'DELETE FROM courses WHERE instructor = ?';
+
+                pool.query(query, [instructorId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result.affectedRows);
+                });
+            });
+            return response === 1 ? true : false;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     static async CourseStatus(instructorId, courseId, courseStatus) {
         try {

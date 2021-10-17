@@ -216,48 +216,7 @@ module.exports = class ApiUser {
         }
     }
 
-    // @route   DELETE api/user/delete/:userId
-    // @desc    Delete user by admin
-    // @access  Private
-    static async deleteUser(req, res) {
-        try {
-            //get user information by id
-            let { userId } = req.params;
-            let userPromise = UserService.getUserInfoById(userId).then(
-                async (data) => {
-                    if (!data[0]) {
-                        return res.status(400).json({
-                            error: true,
-                            msg: 'Không tìm thấy user',
-                        });
-                    }
-                    if (data[0].imageUrl) {
-                        await cloudinary.uploader.destroy(
-                            data[0].imageUrl.split(' ')[1],
-                        );
-                    }
-                },
-            );
-            let deletePromise = UserService.deleteUserById(userId).then(
-                (data) => {
-                    if (!data) {
-                        return res.status(400).json({
-                            error: 'Không xoá được user',
-                        });
-                    }
-                    return res.status(200).json({
-                        error: false,
-                        msg: 'Đã xoá user',
-                    });
-                },
-            );
-
-            Promise.all([userPromise, deletePromise]);
-        } catch (error) {
-            console.log(error.message);
-            res.status(500).send('Server error');
-        }
-    }
+   
 
     // @route   PUT api/user/beAnInstructor
     // @desc    to be an beIntructor
