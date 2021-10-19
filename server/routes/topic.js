@@ -27,9 +27,9 @@ Router.get(
     ApiTopic.getCourseTopics,
 );
 
-    // @route   GET api/topic/:courseId/edit/:topicId
-    // @desc    edit Topics
-    // @access  Private
+// @route   GET api/topic/:courseId/edit/:topicId
+// @desc    edit Topics
+// @access  Private
 Router.put(
     '/:courseId/edit/:topicId',
     auth,
@@ -38,9 +38,9 @@ Router.put(
     ApiTopic.editTopic,
 );
 
-    // @route   GET api/topic/:courseId/changeOrder/:topicId
-    // @desc    edit Topics
-    // @access  Private
+// @route   GET api/topic/:courseId/changeOrder/:topicId
+// @desc    edit Topics
+// @access  Private
 Router.put(
     '/:courseId/changeOrder/:topicId',
     auth,
@@ -49,9 +49,9 @@ Router.put(
     ApiTopic.changeOrder,
 );
 
-    // @route   GET api/topic/:courseId/delete/:topicId
-    // @desc    edit Topics
-    // @access  Private
+// @route   GET api/topic/:courseId/delete/:topicId
+// @desc    edit Topics
+// @access  Private
 Router.delete(
     '/:courseId/delete/:topicId',
     auth,

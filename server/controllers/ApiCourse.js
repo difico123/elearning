@@ -1,7 +1,7 @@
 const CourseService = require('../dbservice/CourseService');
 const UserCourseService = require('../dbservice/UserCourseService');
 const cloudinary = require('../config/cloud/cloudinary');
-const TopicService = require('../dbservice/TopicService')
+const TopicService = require('../dbservice/TopicService');
 
 module.exports = class ApiCourse {
     // @route   POST api/course/create
@@ -232,7 +232,7 @@ module.exports = class ApiCourse {
             CourseService.getSingleInstructorCourse(
                 req.user.id,
                 req.params.courseId,
-            ).then(async(data) => {
+            ).then(async (data) => {
                 if (!data[0]) {
                     return res.status(400).json({
                         error: true,
@@ -241,15 +241,16 @@ module.exports = class ApiCourse {
                 }
                 course = data[0];
                 let courseTopics = [];
-                await TopicService.getCourseTopicTitles(req.params.courseId).then(topics => {
-                    if(topics.length === 0) {
-
+                await TopicService.getCourseTopicTitles(
+                    req.params.courseId,
+                ).then((topics) => {
+                    if (topics.length === 0) {
                     } else {
                         courseTopics = topics;
                     }
-                })
+                });
                 course.topics = courseTopics;
-                
+
                 res.status(200).json({ error: false, data: course });
             });
         } catch (error) {

@@ -2,7 +2,7 @@ const UserService = require('../dbservice/UserService');
 const CourseService = require('../dbservice/CourseService');
 const cloudinary = require('cloudinary');
 
-module.exports = class ApiUser {
+module.exports = class ApiAdmin {
     // @route   DELETE api/admin/delete/:userId
     // @desc    Delete user by admin
     // @access  Private

@@ -8,9 +8,9 @@ module.exports = class ApiNotification {
         try {
             CategoryService.getCategory().then((data) => {
                 if (data.length == 0) {
-                    return res.status(400).json({ error: true,msg: 'Rỗng' });
+                    return res.status(400).json({ error: true, msg: 'Rỗng' });
                 }
-                res.status(200).json({error: false, data});
+                res.status(200).json({ error: false, data });
             });
         } catch (error) {
             console.log(error.message);

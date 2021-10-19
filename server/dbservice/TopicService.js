@@ -1,6 +1,6 @@
 const pool = require('../config/db/db');
 
-module.exports = class NotificationService {
+module.exports = class TopicService {
     static async addTopic(topic) {
         try {
             const response = await new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ module.exports = class NotificationService {
             const response = await new Promise((resolve, reject) => {
                 const query = 'update topics SET ? where id = ?';
 
-                pool.query(query, [topic,topic.id], (err, result) => {
+                pool.query(query, [topic, topic.id], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result.affectedRows);
                 });
@@ -66,7 +66,8 @@ module.exports = class NotificationService {
     static async getCourseTopicTitles(courseId) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'select title from topics where course = ? order by indexOrder asc, dateAdded asc, title asc';
+                const query =
+                    'select title from topics where course = ? order by indexOrder asc, dateAdded asc, title asc';
 
                 pool.query(query, [courseId], (err, result) => {
                     if (err) reject(new Error(err.message));
