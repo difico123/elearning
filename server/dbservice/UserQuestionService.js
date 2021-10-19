@@ -1,12 +1,12 @@
 const pool = require('../config/db/db');
 
-module.exports = class QuestionService {
-    static async createQuestion(question) {
+module.exports = class UserQuestionService {
+    static async studentAnswer(answer) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'INSERT INTO questions SET ? ';
+                const query = 'INSERT INTO user_questions SET ? ';
 
-                pool.query(query, [question], (err, result) => {
+                pool.query(query, [answer], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result.affectedRows);
                 });
@@ -20,7 +20,7 @@ module.exports = class QuestionService {
     static async getQuestionByQuizId(quizId) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'select * from questions where quiz = ?';
+                const query = 'select * from user_questions where quiz = ?';
 
                 pool.query(query, [quizId], (err, result) => {
                     if (err) reject(new Error(err.message));

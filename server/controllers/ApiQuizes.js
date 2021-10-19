@@ -1,14 +1,13 @@
 const TopicService = require('../dbservice/TopicService');
 const NotificationService = require('../dbservice/NotificationService');
 const UserCourseService = require('../dbservice/UserCourseService');
-const QuizService = require('../dbservice/QuizService')
+const QuizService = require('../dbservice/QuizService');
 
 module.exports = class ApiQuizes {
     // @route   POST api/quizes/:courseId/:topicId/create
     // @desc    create quizes by instructor
     // @access  Private
     static async createQuiz(req, res) {
-        
         const quize = {
             title: req.body.title,
             shown: req.body.shown,
@@ -22,7 +21,9 @@ module.exports = class ApiQuizes {
                         .json({ error: true, msg: 'Chưa tạo được topic' });
                 }
 
-                return res.status(200).json({ error:false, msg: 'tạo quiz thành công'})
+                return res
+                    .status(200)
+                    .json({ error: false, msg: 'tạo quiz thành công' });
             });
         } catch (error) {
             console.log(error.message);
@@ -30,9 +31,9 @@ module.exports = class ApiQuizes {
         }
     }
 
-// @route   POST api/quizes/:courseId/:topicId/getQuizes
-// @desc    get quizzes by instructor and student
-// @access  Private
+    // @route   POST api/quizes/:courseId/:topicId/getQuizes
+    // @desc    get quizzes by instructor and student
+    // @access  Private
     static async getquizes(req, res) {
         try {
             QuizService.getQuizesByTopic(req.params.topicId).then((data) => {

@@ -28,6 +28,7 @@ app.use('/api/choice', require('./routes/choice'));
 app.use('/api/category', require('./routes/category'));
 app.use('/api/userCourse', require('./routes/usercourse'));
 app.use('/api/notification', require('./routes/notification'));
+app.use('/api/userquestion', require('./routes/userquestion'));
 
 app.use((req, res) => {
     res.status(404).json({

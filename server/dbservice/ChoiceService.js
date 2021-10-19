@@ -24,7 +24,7 @@ module.exports = class ChoiceService {
 
                 pool.query(query, [questionId], (err, result) => {
                     if (err) reject(new Error(err.message));
-                    
+
                     resolve(result);
                 });
             });

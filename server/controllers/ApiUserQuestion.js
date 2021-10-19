@@ -1,27 +1,28 @@
 const QuizService = require('../dbservice/QuizService');
 const QuestionService = require('../dbservice/QuestionService');
+const UserQuestionService = require('../dbservice/UserQuestionService');
 
-module.exports = class ApiQuestion {
-    // @route   POST api/question/:courseId/:quizId/createQuestion
-    // @desc    create question by instructor
+module.exports = class ApiUserQuestion {
+    // @route   POST /api/userquestion/answer/:questionId
+    // @desc    answer a question by student
     // @access  Private
-    static async createQuestion(req, res) {
-        const question = {
-            content: req.body.content,
-            quiz: req.params.quizId,
-            marks: req.body.marks,
+    static async answerQuestion(req, res) {
+        const answer = {
+            user: req.user.id,
+            choice: req.body.choice,
+            question: req.params.questionId,
         };
         try {
-            QuestionService.createQuestion(question).then((created) => {
+            UserQuestionService.studentAnswer(answer).then((created) => {
                 if (!created) {
                     return res
                         .status(400)
-                        .json({ error: true, msg: 'Chưa tạo được câu hỏi' });
+                        .json({ error: true, msg: 'Bạn chưa trả lời câu hỏi' });
                 }
 
                 return res
                     .status(200)
-                    .json({ error: false, msg: 'tạo câu hỏi thành công' });
+                    .json({ error: false, msg: 'Trả câu hỏi thành công' });
             });
         } catch (error) {
             console.log(error.message);

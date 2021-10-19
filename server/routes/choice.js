@@ -24,7 +24,7 @@ Router.get(
     '/:courseId/:questionId/getChoices',
     auth,
     userCourseAuth,
-    ApiChoice.getChoices
+    ApiChoice.getChoices,
 );
 
 module.exports = Router;
