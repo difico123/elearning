@@ -45,11 +45,34 @@ router.get('/logout', ApiUser.logout);
 // @route   POST api/auth/forgotPassword
 // @desc    forgot user password
 // @access  Public
-router.post('/forgotPassword', ApiUser.forgotPassword);
+router.post(
+    '/forgotPassword',
+    [check('email', 'Địa chỉ email không hợp lệ').isEmail()],
+    validateInput,
+    ApiUser.forgotPassword,
+);
 
 // @route   POST api/auth/resetPassword/:token
 // @desc    reset user password
 // @access  Public
-router.post('/resetPassword/:token', ApiUser.resetPassword);
+router.post(
+    '/resetPassword/:token',
+    [
+        check(
+            'newPassword',
+            'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự',
+        ).isLength({
+            min: 6,
+        }),
+        check(
+            'confirmPassword',
+            'Vui lòng điền mật khẩu xác nhận nhiều hơn 6 kí tự',
+        ).isLength({
+            min: 6,
+        }),
+    ],
+    validateInput,
+    ApiUser.resetPassword,
+);
 
 module.exports = router;

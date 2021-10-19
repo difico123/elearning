@@ -1,5 +1,7 @@
 const CourseService = require('../dbservice/CourseService');
 const UserCourseService = require('../dbservice/UserCourseService');
+const NotificationService = require('../dbservice/NotificationService');
+const UserService = require('../dbservice/UserService');
 
 module.exports = class ApiCourse {
     // @route   GET api/userCourse/enroll/:courseId
@@ -33,7 +35,25 @@ module.exports = class ApiCourse {
                             .status(400)
                             .json({ error: 'Bạn đã đăng kí khoá học rồi' });
                     }
-                    res.status(200).send('Đăng kí khoá học thành công');
+                   
+
+                    UserService.getUserInfoById(studentId).then(data => {
+                        let student = data[0];
+                        
+                        let details = `${student.lastName} vừa đăng kí khoá học của bạn`;
+                        let notification = {
+                            user: course.instructor,
+                            topic: 'Đăng kí khoá học',
+                            details: details,
+                        };
+                        NotificationService.addNotification(notification).then(notified => {
+                            if(!notified) {
+                                return res.status(400).json({ error: true, msg:'chưa thông báo được đến thầy '})
+                            }
+                            console.log('tin nhắn đã thông báo đến instructor')
+                            return res.status(200).send('Đăng kí khoá học thành công');
+                        })
+                    });
                 });
             });
         } catch (error) {

@@ -245,12 +245,10 @@ module.exports = class ApiUser {
                     id: data[0].id,
                 };
                 if (newPassword !== confirmPassword) {
-                    return res
-                        .status(400)
-                        .json({
-                            error: true,
-                            msg: 'Mật khẩu mới và mật khẩu xác nhận của bạn không khớp',
-                        });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Mật khẩu mới và mật khẩu xác nhận của bạn không khớp',
+                    });
                 }
 
                 const salt = await bcrypt.genSalt(10);
@@ -260,20 +258,16 @@ module.exports = class ApiUser {
 
                 UserService.updateUserInfo(user).then((updated) => {
                     if (!updated) {
-                        return res
-                            .status(400)
-                            .json({
-                                error: true,
-                                msg: 'mật khẩu mới chưa được cập nhật',
-                            });
+                        return res.status(400).json({
+                            error: true,
+                            msg: 'mật khẩu mới chưa được cập nhật',
+                        });
                     }
 
-                    return res
-                        .status(200)
-                        .json({
-                            error: false,
-                            msg: 'mật khẩu của bạn đã được đổi thành công',
-                        });
+                    return res.status(200).json({
+                        error: false,
+                        msg: 'mật khẩu của bạn đã được đổi thành công',
+                    });
                 });
             },
         );

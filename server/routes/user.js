@@ -36,6 +36,21 @@ router.get('/showAvt/:userId', ApiUser.showAvt);
 // @route   PUT api/user/editPw
 // @desc    edit user password
 // @access  private
-router.put('/editPw', auth, ApiUser.editPw);
+router.put('/editPw',
+[
+    check(
+        'newPassword',
+        'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự',
+    ).isLength({
+        min: 6,
+    }),
+    check(
+        'password',
+        'Vui lòng điền mật khẩu xác nhận nhiều hơn 6 kí tự',
+    ).isLength({
+        min: 6,
+    }),
+],
+auth, ApiUser.editPw);
 
 module.exports = router;

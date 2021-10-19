@@ -17,6 +17,22 @@ module.exports = class NotificationService {
         }
     }
 
+    static async editTopic(topic) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'update topics SET ? where id = ?';
+
+                pool.query(query, [topic,topic.id], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result.affectedRows);
+                });
+            });
+            return response === 1 ? true : false;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     static async getCourseTopics(courseId) {
         try {
             const response = await new Promise((resolve, reject) => {
@@ -28,6 +44,52 @@ module.exports = class NotificationService {
                 });
             });
             return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    static async getCourseTopicById(topicId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'select * from topics where id = ?';
+
+                pool.query(query, [topicId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    static async getCourseTopicTitles(courseId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'select title from topics where course = ? order by indexOrder asc, dateAdded asc, title asc';
+
+                pool.query(query, [courseId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async deleteTopic(topicId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'DELETE FROM topics WHERE id = ?';
+
+                pool.query(query, [topicId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result.affectedRows);
+                });
+            });
+            return response === 1 ? true : false;
         } catch (error) {
             console.log(error);
         }

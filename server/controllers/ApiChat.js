@@ -38,7 +38,7 @@ module.exports = class ApiChat {
                                         details = `${firstDetailsMsg} bạn`;
                                         break;
                                     default:
-                                        details = `${firstDetailsMsg} ${chattedCourse[0].instructorName}`;
+                                        details = `${firstDetailsMsg} thầy ${chattedCourse[0].instructorName}`;
                                 }
 
                                 let notification = {

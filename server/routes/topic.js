@@ -6,7 +6,7 @@ const courseInstructorAuth = require('../middleware/auth/courseInstructor.auth')
 const ApiTopic = require('../controllers/ApiTopic');
 const userCourseAuth = require('../middleware/auth/userCourse.auth');
 
-// @route   POST api/notification/create
+// @route   POST api/topic/create
 // @desc    create topic by instructor
 // @access  Private
 Router.post(
@@ -17,7 +17,7 @@ Router.post(
     ApiTopic.createTopic,
 );
 
-// @route   GET api/notification/getCourseTopics
+// @route   GET api/topic/getCourseTopics
 // @desc    get All course topic
 // @access  Private
 Router.get(
@@ -25,6 +25,39 @@ Router.get(
     auth,
     userCourseAuth,
     ApiTopic.getCourseTopics,
+);
+
+    // @route   GET api/topic/:courseId/edit/:topicId
+    // @desc    edit Topics
+    // @access  Private
+Router.put(
+    '/:courseId/edit/:topicId',
+    auth,
+    instructorAuth,
+    courseInstructorAuth,
+    ApiTopic.editTopic,
+);
+
+    // @route   GET api/topic/:courseId/changeOrder/:topicId
+    // @desc    edit Topics
+    // @access  Private
+Router.put(
+    '/:courseId/changeOrder/:topicId',
+    auth,
+    instructorAuth,
+    courseInstructorAuth,
+    ApiTopic.changeOrder,
+);
+
+    // @route   GET api/topic/:courseId/delete/:topicId
+    // @desc    edit Topics
+    // @access  Private
+Router.delete(
+    '/:courseId/delete/:topicId',
+    auth,
+    instructorAuth,
+    courseInstructorAuth,
+    ApiTopic.deleteTopic,
 );
 
 module.exports = Router;

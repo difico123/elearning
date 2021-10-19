@@ -3,12 +3,12 @@ const NotificationService = require('../dbservice/NotificationService');
 const UserCourseService = require('../dbservice/UserCourseService');
 
 module.exports = class ApiCourse {
-    // @route   POST api/course/create
-    // @desc    Create course
+    // @route   POST api/topic/create
+    // @desc    Create topic
     // @access  Private
     static async createTopic(req, res) {
         const topic = {
-            topicNo: req.body.topicNo,
+            indexOrder: req.body.indexOrder,
             title: req.body.title,
             content: req.body.content,
             course: req.params.courseId,
@@ -18,13 +18,13 @@ module.exports = class ApiCourse {
                 if (!created) {
                     return res
                         .status(400)
-                        .json({ error: 'Chưa tạo được topic' });
+                        .json({ error:true, msg: 'Chưa tạo được topic' });
                 }
 
                 UserCourseService.getCourseUsers(topic.course).then((users) => {
                     if (users.length === 0) {
                         return res.status(400).json({
-                            error: 'Không học sinh nào trong khoá học này',
+                            error: true, msg: 'Không học sinh nào trong khoá học này',
                         });
                     }
                     let notifyToUser = users.map((user) => {
@@ -37,7 +37,7 @@ module.exports = class ApiCourse {
                     });
 
                     Promise.all([notifyToUser]).then((values) => {
-                        return res.status(200).send('Tạo topic thành công');
+                        return res.status(200).json({ error: false, msg:'Tạo topic thành công'});
                     });
                 });
             });
@@ -47,8 +47,8 @@ module.exports = class ApiCourse {
         }
     }
 
-    // @route   GET api/notification/getCourseTopics
-    // @desc    get All course topics
+    // @route   GET api/topic/getCourseTopics
+    // @desc    get All topics
     // @access  Private
     static async getCourseTopics(req, res) {
         try {
@@ -56,9 +56,76 @@ module.exports = class ApiCourse {
                 if (data.length == 0) {
                     return res
                         .status(400)
-                        .json({ error: 'Bạn chưa có topic nào' });
+                        .json({ error: true, msg:'Bạn chưa có topic nào' });
                 }
-                res.status(200).json(data);
+                res.status(200).json({error: true, data});
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+
+    // @route   GET api/topic/edit/:topicId
+    // @desc    edit Topics
+    // @access  Private
+    static async editTopic(req, res) {
+        let topic = {
+            id: req.params.topicId,
+            indexOrder: req.body.indexOrder,
+            title: req.body.title,
+            content: req.body.content   
+        }
+        try {
+            TopicService.editTopic(topic).then((updated) => {
+                if (!updated) {
+                    return res
+                        .status(400)
+                        .json({ error: true, msg:'Bạn chưa cập nhật được topic' });
+                }
+                res.status(200).json({error: true, msg: 'cập nhật topic thành công'});
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+
+    // @route   GET api/topic/:courseId/changeOrder/:topicId
+    // @desc    Edit Topic
+    // @access  Private
+    static async changeOrder(req, res) {
+        let topic = {
+            id: req.params.topicId,
+            indexOrder: req.body.indexOrder 
+        }
+        try {
+            TopicService.editTopic(topic).then((updated) => {
+                if (!updated) {
+                    return res
+                        .status(400)
+                        .json({ error: true, msg:'Bạn chưa cập nhật được thứ tự topic' });
+                }
+                res.status(200).json({error: true, msg: 'cập nhật thứ tụ topic thành công'});
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+    // @route   GET api/topic/:courseId/deleteTopic/:topicId
+    // @desc    Delete Topic
+    // @access  Private
+    static async deleteTopic(req, res) {
+
+        try {
+            TopicService.deleteTopic(req.params.topicId).then((deleted) => {
+                if (!deleted) {
+                    return res
+                        .status(400)
+                        .json({ error: true, msg:'Bạn chưa xoá được topic' });
+                }
+                res.status(200).json({error: true, msg: 'Bạn đã xoá topic'});
             });
         } catch (error) {
             console.log(error.message);

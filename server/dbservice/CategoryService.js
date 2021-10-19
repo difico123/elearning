@@ -5,10 +5,11 @@ module.exports = class NotificationService {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query =
-                    'select ca.id, ca.name, COUNT(uc.id) as studentNum from categories ca ' +
-                    'join courses c on c.category = ca.id ' +
-                    'join user_courses uc on uc.course = c.id ' +
-                    'GROUP by ca.id; ';
+                    'select ca.id as categoryId, ca.name as categoryName, '+
+                    'count(c.id) as courseNum,count(uc.id) as register, '+
+                   ' round(avg(uc.rating),1) as rating '+
+                    'from courses c join categories ca on ca.id = c.category '+
+                    'join user_courses uc on uc.course = c.id group by ca.id';
 
                 pool.query(query, (err, result) => {
                     if (err) reject(new Error(err.message));

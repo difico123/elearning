@@ -110,13 +110,15 @@ module.exports = class CourseService {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query =
-                    'SELECT courses.id, courses.name, courses.des, ' +
-                    'categories.id as categoryId, categories.name as categoryName, courses.instructor,' +
-                    'concat(users.firstName, " " , users.middleName, " ", users.lastName) as fullName, ' +
-                    'users.email FROM courses ' +
-                    'join users on users.id = courses.instructor ' +
-                    'join categories on categories.id = courses.category ' +
-                    'where verified = 1';
+                'select c.id as courseId, c.name, c.des, ca.id as categoryId, ca.name as categoryName, ' +
+                'c.instructor as instructorId, concat(u.firstName," ", u.middleName," ", u.lastName) as instructorName, ' +
+                'u.email as instructorEmail, round(avg(uc.rating),1) as rating, ' +
+                'count(uc.id) as register from courses c ' +
+                'JOIN categories ca on ca.id = c.category ' +
+                'left join user_courses uc on uc.course = c.id ' +
+                'left join users u on u.id = c.instructor ' +
+                'where c.verified = 1 ' +
+                'group by c.id';
                 pool.query(query, (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
