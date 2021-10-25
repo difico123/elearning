@@ -7,11 +7,11 @@ const ApiQuizes = require('../controllers/ApiQuizes');
 const ApiQuestion = require('../controllers/ApiQuestion');
 const userCourseAuth = require('../middleware/auth/userCourse.auth');
 
-// @route   POST api/question/:courseId/:quizId/createQuestion
+// @route   POST POST api/question/:courseId/:topicId/:quizId/createQuestion
 // @desc    create question by instructor
 // @access  Private
 Router.post(
-    '/:courseId/:quizId/createQuestion',
+    '/:courseId/:topicId/:quizId/createQuestion',
     auth,
     instructorAuth,
     courseInstructorAuth,
@@ -26,6 +26,15 @@ Router.get(
     auth,
     userCourseAuth,
     ApiQuestion.getQuestions,
+);
+// @route   GET api/question/:courseId/:quizId/getQAsByQuiz
+// @desc    get questions and answers with quizId by instructor and student
+// @access  Private
+Router.get(
+    '/:courseId/:quizId/getQAsByQuiz',
+    auth,
+    userCourseAuth,
+    ApiQuestion.getQAsByquiz,
 );
 
 module.exports = Router;

@@ -48,6 +48,21 @@ module.exports = class TopicService {
             console.log(error);
         }
     }
+    static async checkTopicInCource(topicId, courseId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'select * from topics where id = ? and course = ? ';
+
+                pool.query(query, [topicId, courseId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
     static async getCourseTopicById(topicId) {
         try {
             const response = await new Promise((resolve, reject) => {

@@ -14,17 +14,36 @@ module.exports = class ApiQuizes {
             topic: req.params.topicId,
         };
         try {
-            QuizService.createQuiz(quize).then((created) => {
-                if (!created) {
+            TopicService.checkTopicInCource(req.params.topicId, req.params.courseId).then(data => {
+                if (data.length === 0) {
                     return res
                         .status(400)
-                        .json({ error: true, msg: 'Chưa tạo được topic' });
-                }
+                        .json({
+                            error: true,
+                            msg: 'Topic này không nằm trong khoá học'
+                        });
+                } else {
+                    QuizService.createQuiz(quize).then((created) => {
+                        if (!created) {
+                            return res
+                                .status(400)
+                                .json({
+                                    error: true,
+                                    msg: 'Chưa tạo được topic'
+                                });
+                        }
 
-                return res
-                    .status(200)
-                    .json({ error: false, msg: 'tạo quiz thành công' });
-            });
+                        return res
+                            .status(200)
+                            .json({
+                                error: false,
+                                msg: 'tạo quiz thành công'
+                            });
+                    });
+
+                }
+            })
+
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
@@ -40,9 +59,15 @@ module.exports = class ApiQuizes {
                 if (data.length == 0) {
                     return res
                         .status(400)
-                        .json({ error: true, msg: 'Bạn chưa có quiz nào' });
+                        .json({
+                            error: true,
+                            msg: 'Bạn chưa có quiz nào'
+                        });
                 }
-                res.status(200).json({ error: false, data });
+                res.status(200).json({
+                    error: false,
+                    data
+                });
             });
         } catch (error) {
             console.log(error.message);

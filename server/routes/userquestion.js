@@ -17,4 +17,14 @@ Router.post(
     ApiUserQuestion.answerQuestion,
 );
 
+// @route   GET /api/userquestion/:courseId/:quizId/getQuizScore
+// @desc    rank quiz
+// @access  Private
+Router.get(
+    '/:courseId/:quizId/getQuizScore',
+    auth,
+    userCourseAuth,
+    ApiUserQuestion.getQuizScore,
+);
+
 module.exports = Router;

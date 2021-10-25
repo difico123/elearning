@@ -33,4 +33,23 @@ module.exports = class ChoiceService {
             console.log(error);
         }
     }
+
+    static async getChoicesInQuestion(choiceId, questionId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'select * from choices c ' +
+                    'join questions q on q.id = c.question ' +
+                    'where q.id = ? and c.id = ?';
+
+                pool.query(query, [questionId, choiceId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

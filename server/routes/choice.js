@@ -6,18 +6,18 @@ const courseInstructorAuth = require('../middleware/auth/courseInstructor.auth')
 const ApiChoice = require('../controllers/ApiChoice');
 const userCourseAuth = require('../middleware/auth/userCourse.auth');
 
-// @route   POST api/question/:courseId/:questionId/createchoice
+// @route   POST api/choice/:courseId/:quizId/:questionId/createchoice
 // @desc    create a choice by instructor
 // @access  Private
 Router.post(
-    '/:courseId/:questionId/createchoice',
+    '/:courseId/:quizId/:questionId/createchoice',
     auth,
     instructorAuth,
     courseInstructorAuth,
     ApiChoice.createChoice,
 );
 
-// @route   GET api/question/:courseId/:questionId/getChoices
+// @route   GET api/choice/:courseId/:questionId/getChoices
 // @desc    get choices with questionId by instructor and student
 // @access  Private
 Router.get(

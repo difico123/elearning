@@ -1,6 +1,7 @@
 const QuizService = require('../dbservice/QuizService');
 const QuestionService = require('../dbservice/QuestionService');
 const UserQuestionService = require('../dbservice/UserQuestionService');
+const ChoiceService = require('../dbservice/ChoiceService');
 
 module.exports = class ApiUserQuestion {
     // @route   POST /api/userquestion/answer/:questionId
@@ -10,20 +11,55 @@ module.exports = class ApiUserQuestion {
         const answer = {
             user: req.user.id,
             choice: req.body.choice,
-            question: req.params.questionId,
+            question: parseInt(req.params.questionId),
         };
         try {
-            UserQuestionService.studentAnswer(answer).then((created) => {
-                if (!created) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'Bạn chưa trả lời câu hỏi' });
-                }
+            ChoiceService.getChoicesInQuestion(req.body.choice, req.params.questionId).then(data => {
+                if (data.length === 0) {
+                    return res.status(200).json({
+                        error: true,
+                        msg: 'Câu trả lời không nằm trong câu hỏi',
+                    });
+                } else {
 
-                return res
-                    .status(200)
-                    .json({ error: false, msg: 'Trả câu hỏi thành công' });
-            });
+                    const addAnswer = UserQuestionService.studentAnswer(answer).then(
+                        (created) => {
+                            if (!created) {
+                                return res.status(200).json({
+                                    error: false,
+                                    msg: 'Bạn chưa trả lời câu hỏi',
+                                });
+                            }
+                        },
+                    ).catch(err => {
+                        return res.status(400).json({
+                            error: true,
+                            msg: 'lỗi bạn đã trả lời'
+                        })
+                    });
+
+                    Promise.all([addAnswer]).then(() => {
+                        UserQuestionService.checkCorrectAnswer(answer).then(
+                            (correct) => {
+                                return correct[0].isAnswer === 0 ?
+                                    res.status(200).json({
+                                        error: false,
+                                        msg: 'Sai'
+                                    }) :
+                                    res
+                                    .status(200)
+                                    .json({
+                                        error: false,
+                                        msg: 'Đúng'
+                                    });
+                            },
+                        );
+                    });
+
+                }
+            })
+
+
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
@@ -38,14 +74,40 @@ module.exports = class ApiUserQuestion {
             QuestionService.getQuestionByQuizId(req.params.quizId).then(
                 (data) => {
                     if (data.length == 0) {
-                        return res
-                            .status(400)
-                            .json({
-                                error: true,
-                                msg: 'Bạn chưa có câu hỏi nào',
-                            });
+                        return res.status(200).json({
+                            error: false,
+                            msg: 'Bạn chưa có câu hỏi nào',
+                        });
                     }
-                    res.status(200).json({ error: false, data });
+                    res.status(200).json({
+                        error: false,
+                        data
+                    });
+                },
+            );
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
+
+    // @route   GET api/userquestion/:courseId/:quizId/getQuizScore
+    // @desc    rank student by quizid
+    // @access  Private
+    static async getQuizScore(req, res) {
+        try {
+            QuestionService.rank(req.params.quizId).then(
+                (data) => {
+                    if (data.length == 0) {
+                        return res.status(400).json({
+                            error: true,
+                            msg: '',
+                        });
+                    }
+                    res.status(200).json({
+                        error: false,
+                        data
+                    });
                 },
             );
         } catch (error) {

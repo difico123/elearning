@@ -1,8 +1,9 @@
 const QuizService = require('../dbservice/QuizService');
 const ChoiceService = require('../dbservice/ChoiceService');
+const QuestionService = require('../dbservice/QuestionService');
 
 module.exports = class ApiChoice {
-    // @route   POST api/question/:courseId/:questionId/createQuestion
+    // @route   POST api/question/:courseId/:quizId/:questionId/createchoice
     // @desc    create question by instructor
     // @access  Private
     static async createChoice(req, res) {
@@ -13,20 +14,31 @@ module.exports = class ApiChoice {
         };
 
         try {
-            ChoiceService.create(choice).then((created) => {
-                if (!created) {
-                    return res
-                        .status(400)
-                        .json({
-                            error: true,
-                            msg: 'Chưa tạo được câu trả lời',
-                        });
-                }
+            QuestionService.checkQuestionQuiz(req.params.questionId, req.params.quizId).then(data => {
+                if (data.length === 0) {
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Câu hỏi không nằm trong quiz',
+                    });
+                } else {
+                    ChoiceService.create(choice).then((created) => {
+                        if (!created) {
+                            return res.status(400).json({
+                                error: true,
+                                msg: 'Chưa tạo được câu trả lời',
+                            });
+                        }
 
-                return res
-                    .status(200)
-                    .json({ error: false, msg: 'tạo câu trả lời thành công' });
-            });
+                        return res
+                            .status(200)
+                            .json({
+                                error: false,
+                                msg: 'tạo câu trả lời thành công'
+                            });
+                    });
+                }
+            })
+
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
@@ -37,20 +49,19 @@ module.exports = class ApiChoice {
     // @desc    get question with quizId by instructor and student
     // @access  Private
     static async getChoices(req, res) {
-        console.log(req.params.questionId);
-
         try {
             ChoiceService.getChoicesByQuestionId(req.params.questionId).then(
                 (data) => {
                     if (data.length == 0) {
-                        return res
-                            .status(400)
-                            .json({
-                                error: true,
-                                msg: 'Bạn chưa có câu trả lời nào',
-                            });
+                        return res.status(400).json({
+                            error: true,
+                            msg: 'Không có có câu trả lời',
+                        });
                     }
-                    res.status(200).json({ error: false, data });
+                    res.status(200).json({
+                        error: false,
+                        data
+                    });
                 },
             );
         } catch (error) {

@@ -32,4 +32,35 @@ module.exports = class QuizService {
             console.log(error);
         }
     }
+
+    static async checkQuizTopic(quizId, topicId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'select * from quizes where id = ? and topic = ? ';
+
+                pool.query(query, [quizId, topicId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    static async getQuizById(quizId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'select * from quizes where id = ?';
+
+                pool.query(query, [quizId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };
