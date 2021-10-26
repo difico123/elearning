@@ -2,6 +2,7 @@ const CourseService = require('../dbservice/CourseService');
 const UserCourseService = require('../dbservice/UserCourseService');
 const cloudinary = require('../config/cloud/cloudinary');
 const TopicService = require('../dbservice/TopicService');
+const CategoryService = require('../dbservice/CategoryService');
 
 module.exports = class ApiCourse {
     // @route   POST api/course/create
@@ -14,27 +15,41 @@ module.exports = class ApiCourse {
             des: req.body.des,
             category: req.params.categoryId,
         };
-
-        if (req.file !== undefined) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'courses',
-            });
-
-            course.imageUrl = `${result.secure_url} ${result.public_id}`;
-        }
-
         try {
-            CourseService.addCourse(course).then((created) => {
-                if (!created) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'Chưa tạo được khoá học' });
-                }
-                res.status(200).json({
-                    error: false,
-                    msg: 'Tạo khoá học thành công',
-                });
-            });
+            CategoryService.checkCourseCategory(req.params.categoryId).then(
+                async (data) => {
+                    if (data.length === 0) {
+                        return res.status(400).json({
+                            error: true,
+                            msg: 'Loại khoá học không hợp lệ',
+                        });
+                    } else {
+                        if (req.file !== undefined) {
+                            const result = await cloudinary.uploader.upload(
+                                req.file.path,
+                                {
+                                    folder: 'courses',
+                                },
+                            );
+
+                            course.imageUrl = `${result.secure_url} ${result.public_id}`;
+                        }
+
+                        CourseService.addCourse(course).then((created) => {
+                            if (!created) {
+                                return res.status(400).json({
+                                    error: true,
+                                    msg: 'Chưa tạo được khoá học',
+                                });
+                            }
+                            res.status(200).json({
+                                error: false,
+                                msg: 'Tạo khoá học thành công',
+                            });
+                        });
+                    }
+                },
+            );
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
@@ -85,9 +100,10 @@ module.exports = class ApiCourse {
                 suspendStatus,
             ).then((updated) => {
                 if (!updated) {
-                    return res
-                        .status(400)
-                        .json({ error: false, msg: 'Chưa tạm dừng khoá học' });
+                    return res.status(400).json({
+                        error: false,
+                        msg: 'Chưa tạm dừng khoá học',
+                    });
                 }
                 res.status(200).json({
                     error: false,
@@ -161,8 +177,8 @@ module.exports = class ApiCourse {
             }
 
             if (!course[0].imageUrl) {
-                return res.status(404).json({
-                    error: true,
+                return res.status(200).json({
+                    error: false,
                     msg: 'Không có đường dẫn ảnh khoá học',
                 });
             }
@@ -196,7 +212,10 @@ module.exports = class ApiCourse {
                         msg: 'Không xoá được khoá học',
                     });
                 }
-                res.status(200).json({ error: false, msg: 'Đã xoá khoá học ' });
+                res.status(200).json({
+                    error: false,
+                    msg: 'Đã xoá khoá học ',
+                });
             });
         } catch (error) {
             console.log(error.message);
@@ -211,11 +230,15 @@ module.exports = class ApiCourse {
         try {
             CourseService.getCoursesByInstructorId(req.user.id).then((data) => {
                 if (data.length == 0) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'Bạn chưa có khoá học nào' });
+                    return res.status(200).json({
+                        error: false,
+                        msg: 'Bạn chưa có khoá học nào',
+                    });
                 }
-                res.status(200).json({ error: false, data });
+                res.status(200).json({
+                    error: false,
+                    data,
+                });
             });
         } catch (error) {
             console.log(error.message);
@@ -251,7 +274,10 @@ module.exports = class ApiCourse {
                 });
                 course.topics = courseTopics;
 
-                res.status(200).json({ error: false, data: course });
+                res.status(200).json({
+                    error: false,
+                    data: course,
+                });
             });
         } catch (error) {
             console.log(error.message);
@@ -271,7 +297,10 @@ module.exports = class ApiCourse {
                         msg: 'Bạn chưa có khoá học nào',
                     });
                 }
-                res.status(200).json({ error: false, data });
+                res.status(200).json({
+                    error: false,
+                    data,
+                });
             });
         } catch (error) {
             console.log(error.message);
@@ -286,11 +315,15 @@ module.exports = class ApiCourse {
         try {
             CourseService.getAll().then((data) => {
                 if (data.length == 0) {
-                    return res
-                        .status(200)
-                        .json({ error: false, msg: 'Không có khoá học nào' });
+                    return res.status(200).json({
+                        error: false,
+                        msg: 'Không có khoá học nào',
+                    });
                 }
-                res.status(200).json({ error: false, data });
+                res.status(200).json({
+                    error: false,
+                    data,
+                });
             });
         } catch (error) {
             console.log(error.message);
@@ -311,7 +344,10 @@ module.exports = class ApiCourse {
                             msg: 'Không có học sinh nào trong khoá học',
                         });
                     }
-                    res.status(200).json({ error: false, data });
+                    res.status(200).json({
+                        error: false,
+                        data,
+                    });
                 },
             );
         } catch (error) {

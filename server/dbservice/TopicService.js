@@ -36,7 +36,10 @@ module.exports = class TopicService {
     static async getCourseTopics(courseId) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'select * from topics where course = ?';
+                const query =
+                    'select * from topics  ' +
+                    'where course = ? ' +
+                    'order by indexOrder asc, id asc ';
 
                 pool.query(query, [courseId], (err, result) => {
                     if (err) reject(new Error(err.message));
@@ -51,7 +54,8 @@ module.exports = class TopicService {
     static async checkTopicInCource(topicId, courseId) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'select * from topics where id = ? and course = ? ';
+                const query =
+                    'select * from topics where id = ? and course = ? ';
 
                 pool.query(query, [topicId, courseId], (err, result) => {
                     if (err) reject(new Error(err.message));

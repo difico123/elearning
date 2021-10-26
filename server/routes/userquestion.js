@@ -1,5 +1,5 @@
 const express = require('express');
-const Router = express.Router();
+const router = express.Router();
 const auth = require('../middleware/auth/auth');
 const instructorAuth = require('../middleware/auth/instructor.auth');
 const courseInstructorAuth = require('../middleware/auth/courseInstructor.auth');
@@ -7,24 +7,14 @@ const ApiQuizes = require('../controllers/ApiQuizes');
 const ApiUserQuestion = require('../controllers/ApiUserQuestion');
 const userCourseAuth = require('../middleware/auth/userCourse.auth');
 
-// @route   POST /api/userquestion/:courseId/answer/:questionId
+// @route   POST /api/course/:courseId/topic/:topicId/quiz/:quizId/question/:questionId/userquestion/answer
 // @desc    answer a question by student
 // @access  Private
-Router.post(
-    '/:courseId/answer/:questionId',
-    auth,
-    userCourseAuth,
-    ApiUserQuestion.answerQuestion,
-);
+router.post('/answer', auth, userCourseAuth, ApiUserQuestion.answerQuestion);
 
-// @route   GET /api/userquestion/:courseId/:quizId/getQuizScore
-// @desc    rank quiz
+// @route   GET /api/userquestion/:courseId/:questionId/history
+// @desc    history user question
 // @access  Private
-Router.get(
-    '/:courseId/:quizId/getQuizScore',
-    auth,
-    userCourseAuth,
-    ApiUserQuestion.getQuizScore,
-);
+router.get('/history', auth, userCourseAuth, ApiUserQuestion.history);
 
-module.exports = Router;
+module.exports = router;

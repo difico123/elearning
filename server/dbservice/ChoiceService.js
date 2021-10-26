@@ -17,7 +17,7 @@ module.exports = class ChoiceService {
         }
     }
 
-    static async getChoicesByQuestionId(questionId) {
+    static async getAnswerChoicesByQuestionId(questionId) {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query = 'select * from choices where question = ?';
@@ -34,14 +34,50 @@ module.exports = class ChoiceService {
         }
     }
 
+    static async getChoicesByQuestionId(questionId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query =
+                    'select id as choiceId, content as contentChoice from choices where question = ?';
+
+                pool.query(query, [questionId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     static async getChoicesInQuestion(choiceId, questionId) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'select * from choices c ' +
+                const query =
+                    'select * from choices c ' +
                     'join questions q on q.id = c.question ' +
                     'where q.id = ? and c.id = ?';
 
                 pool.query(query, [questionId, choiceId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    static async getCorrectAnswer(questionId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query =
+                    'select c.id as choiceId from choices c ' +
+                    'where c.question = ? and c.isAnswer = 1';
+
+                pool.query(query, [questionId], (err, result) => {
                     if (err) reject(new Error(err.message));
 
                     resolve(result);

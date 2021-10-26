@@ -21,4 +21,19 @@ module.exports = class CategoryService {
             console.log(error);
         }
     }
+    static async checkCourseCategory(categoryId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = 'select * from categories c where id = ?';
+
+                pool.query(query, [categoryId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

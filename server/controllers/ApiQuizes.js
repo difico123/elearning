@@ -11,62 +11,43 @@ module.exports = class ApiQuizes {
         const quize = {
             title: req.body.title,
             shown: req.body.shown,
-            topic: req.params.topicId,
+            topic: req.topicId,
         };
         try {
-            TopicService.checkTopicInCource(req.params.topicId, req.params.courseId).then(data => {
-                if (data.length === 0) {
-                    return res
-                        .status(400)
-                        .json({
-                            error: true,
-                            msg: 'Topic này không nằm trong khoá học'
-                        });
-                } else {
-                    QuizService.createQuiz(quize).then((created) => {
-                        if (!created) {
-                            return res
-                                .status(400)
-                                .json({
-                                    error: true,
-                                    msg: 'Chưa tạo được topic'
-                                });
-                        }
-
-                        return res
-                            .status(200)
-                            .json({
-                                error: false,
-                                msg: 'tạo quiz thành công'
-                            });
+            QuizService.createQuiz(quize).then((created) => {
+                if (!created) {
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Chưa tạo được topic',
                     });
-
                 }
-            })
 
+                return res.status(200).json({
+                    error: false,
+                    msg: 'tạo quiz thành công',
+                });
+            });
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
         }
     }
 
-    // @route   POST api/quizes/:courseId/:topicId/getQuizes
+    // @route   GET api/quizes/:courseId/:topicId/create/getQuizes
     // @desc    get quizzes by instructor and student
     // @access  Private
     static async getquizes(req, res) {
         try {
-            QuizService.getQuizesByTopic(req.params.topicId).then((data) => {
+            QuizService.getQuizesByTopic(req.topicId).then((data) => {
                 if (data.length == 0) {
-                    return res
-                        .status(400)
-                        .json({
-                            error: true,
-                            msg: 'Bạn chưa có quiz nào'
-                        });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Không có quiz',
+                    });
                 }
                 res.status(200).json({
                     error: false,
-                    data
+                    data,
                 });
             });
         } catch (error) {

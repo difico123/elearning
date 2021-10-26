@@ -145,6 +145,22 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
+    static async checkCourseCategory(courseId, categoryId) {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query =
+                    'SELECT * FROM courses WHERE id = ? and category = ?';
+
+                pool.query(query, [courseId, categoryId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     static async getSingleInstructorCourse(instructorId, courseId) {
         try {

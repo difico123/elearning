@@ -36,6 +36,24 @@ module.exports = class UserQuestionService {
         }
     }
 
+    static async getChoiceByUserQuestion(userId, questionId) {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query =
+                    'select concat(u.firstName," ",u.middleName, " ",u.lastName) as fullName , ' +
+                    'choice as yourChoice ' +
+                    'from user_questions uq ' +
+                    'join users u on  u.id = uq.user where user = ? and question = ?';
+                pool.query(query, [userId, questionId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     static async checkCorrectAnswer(answer) {
         try {

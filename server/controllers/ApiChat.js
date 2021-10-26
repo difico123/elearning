@@ -15,9 +15,10 @@ module.exports = class ApiChat {
         try {
             ChatService.addChat(chat).then((added) => {
                 if (!added) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Comment của bạn không gửi được' });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Comment của bạn không gửi được',
+                    });
                 }
                 ChatService.getCourseChatUser(chat.user, chat.course).then(
                     (chattedCourse) => {
@@ -53,9 +54,10 @@ module.exports = class ApiChat {
 
                             Promise.all([chatUsers]).then((values) => {
                                 //values is undefined
-                                return res
-                                    .status(200)
-                                    .send('Commnent của bạn đã được gửi');
+                                return res.status(200).json({
+                                    error: false,
+                                    msg: 'Comment của bạn đã được gửi',
+                                });
                             });
                         });
                     },
@@ -75,9 +77,9 @@ module.exports = class ApiChat {
             ChatService.getConversation(req.params.courseId).then(
                 (messages) => {
                     if (messages.length === 0) {
-                        return res
-                            .status(400)
-                            .json({ error: 'Không có cuộc nói chuyện nào' });
+                        return res.status(400).json({
+                            error: 'Không có cuộc nói chuyện nào',
+                        });
                     }
                     res.status(200).json(messages);
                 },
@@ -96,9 +98,9 @@ module.exports = class ApiChat {
             ChatService.getOtherChatUser(req.user.id, req.params.courseId).then(
                 (users) => {
                     if (users.length === 0) {
-                        return res
-                            .status(400)
-                            .json({ error: 'Không có cuộc nói chuyện nào' });
+                        return res.status(400).json({
+                            error: 'Không có cuộc nói chuyện nào',
+                        });
                     }
                     res.status(200).json(users);
                 },
@@ -119,9 +121,9 @@ module.exports = class ApiChat {
                 req.params.courseId,
             ).then((users) => {
                 if (users.length === 0) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Không có cuộc nói chuyện nào' });
+                    return res.status(400).json({
+                        error: 'Không có cuộc nói chuyện nào',
+                    });
                 }
                 res.status(200).json(users);
             });

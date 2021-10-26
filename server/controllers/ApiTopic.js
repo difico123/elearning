@@ -11,14 +11,15 @@ module.exports = class ApiTopic {
             indexOrder: req.body.indexOrder,
             title: req.body.title,
             content: req.body.content,
-            course: req.params.courseId,
+            course: req.courseId,
         };
         try {
             TopicService.addTopic(topic).then((created) => {
                 if (!created) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'Chưa tạo được topic' });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Chưa tạo được topic',
+                    });
                 }
 
                 const getUserPromise = UserCourseService.getCourseUsers(
@@ -58,21 +59,24 @@ module.exports = class ApiTopic {
     // @access  Private
     static async getCourseTopics(req, res) {
         try {
-            TopicService.getCourseTopics(req.params.courseId).then((data) => {
+            TopicService.getCourseTopics(req.courseId).then((data) => {
                 if (data.length == 0) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'Bạn chưa có topic nào' });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Bạn chưa có topic nào',
+                    });
                 }
-                res.status(200).json({ error: true, data });
+                res.status(200).json({
+                    error: true,
+                    data,
+                });
             });
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
         }
     }
-
-    // @route   GET api/topic/edit/:topicId
+    // @route   GET api/course/:courseId/topic/edit/:topicId
     // @desc    edit Topics
     // @access  Private
     static async editTopic(req, res) {
@@ -100,9 +104,8 @@ module.exports = class ApiTopic {
             res.status(500).send('Server error');
         }
     }
-
-    // @route   GET api/topic/:courseId/changeOrder/:topicId
-    // @desc    Edit Topic
+    // @route   GET api/course/:courseId/topic/changeOrder/:topicId
+    // @desc    edit Topic
     // @access  Private
     static async changeOrder(req, res) {
         let topic = {
@@ -134,11 +137,15 @@ module.exports = class ApiTopic {
         try {
             TopicService.deleteTopic(req.params.topicId).then((deleted) => {
                 if (!deleted) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'Bạn chưa xoá được topic' });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'Bạn chưa xoá được topic',
+                    });
                 }
-                res.status(200).json({ error: true, msg: 'Bạn đã xoá topic' });
+                res.status(200).json({
+                    error: true,
+                    msg: 'Bạn đã xoá topic',
+                });
             });
         } catch (error) {
             console.log(error.message);

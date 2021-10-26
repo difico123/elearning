@@ -12,19 +12,19 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
+app.use(
+    express.urlencoded({
+        extended: true,
+    }),
+);
 
 // const connect = require('./config/db/db_initialize').initialize();
 
+app.use('/api/course', require('./routes/course'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/admin', require('./routes/admin'));
-app.use('/api/topic', require('./routes/topic'));
-app.use('/api/course', require('./routes/course'));
-app.use('/api/quizes', require('./routes/quizes'));
-app.use('/api/question', require('./routes/question'));
-app.use('/api/choice', require('./routes/choice'));
 app.use('/api/category', require('./routes/category'));
 app.use('/api/userCourse', require('./routes/usercourse'));
 app.use('/api/notification', require('./routes/notification'));

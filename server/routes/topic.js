@@ -1,63 +1,96 @@
 const express = require('express');
-const Router = express.Router();
+const router = express.Router();
 const auth = require('../middleware/auth/auth');
 const instructorAuth = require('../middleware/auth/instructor.auth');
 const courseInstructorAuth = require('../middleware/auth/courseInstructor.auth');
 const ApiTopic = require('../controllers/ApiTopic');
 const userCourseAuth = require('../middleware/auth/userCourse.auth');
 
-// @route   POST api/topic/create
+const { check } = require('express-validator');
+const validateInput = require('../middleware/errors/validateInput');
+
+const { topicCourseAuth } = require('../middleware/course.auth');
+const { topicPassport } = require('../middleware/passport');
+
+// @route api/course/:courseId/topic/:topicId/quiz
+router.use(
+    '/:topicId/quiz',
+    topicCourseAuth,
+    topicPassport,
+    require('./quizes'),
+);
+
+// @route   POST api/course/:courseId/topic/create
 // @desc    create topic by instructor
 // @access  Private
-Router.post(
-    '/create/:courseId',
+router.post(
+    '/create',
+    [
+        check('indexOrder', 'Không được bỏ trống thứ tự').not().isEmpty(),
+        check('title', 'Tiêu đề phải nhiều hơn 6 ký tự').isLength({
+            min: 6,
+        }),
+        check('content', 'Nội dung phải nhiều hơn 10 ký tự').isLength({
+            min: 10,
+        }),
+    ],
+    validateInput,
     auth,
     instructorAuth,
     courseInstructorAuth,
     ApiTopic.createTopic,
 );
 
-// @route   GET api/topic/getCourseTopics
+// @route   GET api/course/:courseId/topic/getCourseTopics
 // @desc    get All course topic
 // @access  Private
-Router.get(
-    '/getCourseTopics/:courseId',
-    auth,
-    userCourseAuth,
-    ApiTopic.getCourseTopics,
-);
+router.get('/getCourseTopics', auth, userCourseAuth, ApiTopic.getCourseTopics);
 
-// @route   GET api/topic/:courseId/edit/:topicId
+// @route   GET api/course/:courseId/topic/edit/:topicId
 // @desc    edit Topics
 // @access  Private
-Router.put(
-    '/:courseId/edit/:topicId',
+router.put(
+    '/edit/:topicId',
+    [
+        check('indexOrder', 'Không được bỏ trống thứ tự').not().isEmpty(),
+        check('title', 'Tiêu đề phải nhiều hơn 6 ký tự').isLength({
+            min: 6,
+        }),
+        check('content', 'Nội dung phải nhiều hơn 10 ký tự').isLength({
+            min: 10,
+        }),
+    ],
+    validateInput,
+    topicCourseAuth,
     auth,
     instructorAuth,
     courseInstructorAuth,
     ApiTopic.editTopic,
 );
 
-// @route   GET api/topic/:courseId/changeOrder/:topicId
-// @desc    edit Topics
+// @route   GET api/course/:courseId/topic/changeOrder/:topicId
+// @desc    edit Topic
 // @access  Private
-Router.put(
-    '/:courseId/changeOrder/:topicId',
+router.put(
+    '/changeOrder/:topicId',
+    [check('indexOrder', 'Không được bỏ trống thứ tự').not().isEmpty()],
+    validateInput,
+    topicCourseAuth,
     auth,
     instructorAuth,
     courseInstructorAuth,
     ApiTopic.changeOrder,
 );
 
-// @route   GET api/topic/:courseId/delete/:topicId
-// @desc    edit Topics
+// @route   delete api/topic/:courseId/delete/:topicId
+// @desc    delete Topic
 // @access  Private
-Router.delete(
-    '/:courseId/delete/:topicId',
+router.delete(
+    '/delete/:topicId',
     auth,
     instructorAuth,
     courseInstructorAuth,
     ApiTopic.deleteTopic,
 );
 
-module.exports = Router;
+module.exports = router;

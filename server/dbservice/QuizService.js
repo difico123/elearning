@@ -36,7 +36,8 @@ module.exports = class QuizService {
     static async checkQuizTopic(quizId, topicId) {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = 'select * from quizes where id = ? and topic = ? ';
+                const query =
+                    'select * from quizes where id = ? and topic = ? ';
 
                 pool.query(query, [quizId, topicId], (err, result) => {
                     if (err) reject(new Error(err.message));

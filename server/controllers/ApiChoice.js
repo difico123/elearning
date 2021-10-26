@@ -10,35 +10,23 @@ module.exports = class ApiChoice {
         const choice = {
             content: req.body.content,
             isAnswer: req.body.isAnswer,
-            question: req.params.questionId,
+            question: req.questionId,
         };
 
         try {
-            QuestionService.checkQuestionQuiz(req.params.questionId, req.params.quizId).then(data => {
-                if (data.length === 0) {
+            ChoiceService.create(choice).then((created) => {
+                if (!created) {
                     return res.status(400).json({
                         error: true,
-                        msg: 'Câu hỏi không nằm trong quiz',
-                    });
-                } else {
-                    ChoiceService.create(choice).then((created) => {
-                        if (!created) {
-                            return res.status(400).json({
-                                error: true,
-                                msg: 'Chưa tạo được câu trả lời',
-                            });
-                        }
-
-                        return res
-                            .status(200)
-                            .json({
-                                error: false,
-                                msg: 'tạo câu trả lời thành công'
-                            });
+                        msg: 'Chưa tạo được câu trả lời',
                     });
                 }
-            })
 
+                return res.status(200).json({
+                    error: false,
+                    msg: 'tạo câu trả lời thành công',
+                });
+            });
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');
@@ -50,7 +38,7 @@ module.exports = class ApiChoice {
     // @access  Private
     static async getChoices(req, res) {
         try {
-            ChoiceService.getChoicesByQuestionId(req.params.questionId).then(
+            ChoiceService.getAnswerChoicesByQuestionId(req.questionId).then(
                 (data) => {
                     if (data.length == 0) {
                         return res.status(400).json({
@@ -60,7 +48,7 @@ module.exports = class ApiChoice {
                     }
                     res.status(200).json({
                         error: false,
-                        data
+                        data,
                     });
                 },
             );

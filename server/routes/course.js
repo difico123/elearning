@@ -7,6 +7,10 @@ const { check } = require('express-validator');
 const ApiCourse = require('../controllers/ApiCourse');
 const validateInput = require('../middleware/errors/validateInput');
 const upload = require('../utils/multer');
+const { coursePassport } = require('../middleware/passport');
+
+//@route api/course/:courseId/topic
+router.use('/:courseId/topic', coursePassport, require('./topic'));
 
 // @route   POST api/course/create/:categoryId
 // @desc    Create course
