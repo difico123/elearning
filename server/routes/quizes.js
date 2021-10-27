@@ -15,8 +15,8 @@ const { quizTopicAuth } = require('../middleware/course.auth');
 // @route api/course/:courseId/topic/:topicId/quiz/:quizId/question
 router.use(
     '/:quizId/question',
-    quizTopicAuth,
     quizPassport,
+    quizTopicAuth,
     require('./question'),
 );
 
@@ -46,6 +46,12 @@ router.get('/getQuizes', auth, userCourseAuth, ApiQuizes.getquizes);
 // @route   GET /api/course/:courseId/topic/:topicId/quiz/getQuizScore/:quizId
 // @desc    rank quiz
 // @access  Private
-router.get('/getQuizScore/:quizId',quizPassport, auth, userCourseAuth, ApiUserQuestion.getQuizScore);
+router.get(
+    '/getQuizScore/:quizId',
+    quizPassport,
+    auth,
+    userCourseAuth,
+    ApiUserQuestion.getQuizScore,
+);
 
 module.exports = router;

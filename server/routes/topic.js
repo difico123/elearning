@@ -15,8 +15,8 @@ const { topicPassport } = require('../middleware/passport');
 // @route api/course/:courseId/topic/:topicId/quiz
 router.use(
     '/:topicId/quiz',
-    topicCourseAuth,
     topicPassport,
+    topicCourseAuth,
     require('./quizes'),
 );
 
@@ -82,11 +82,12 @@ router.put(
     ApiTopic.changeOrder,
 );
 
-// @route   delete api/topic/:courseId/delete/:topicId
+// @route   delete api/course/:courseId/topic/delete/:topicId
 // @desc    delete Topic
 // @access  Private
 router.delete(
     '/delete/:topicId',
+    topicCourseAuth,
     auth,
     instructorAuth,
     courseInstructorAuth,

@@ -162,4 +162,55 @@ module.exports = class ApiUserQuestion {
             res.status(500).send('Server error');
         }
     }
+    static async history(req, res) {
+        try {
+            QuestionService.getQuestionByQuestionId(req.questionId).then(
+                async (questions) => {
+                    UserQuestionService.getChoiceByUserQuestion(
+                        req.user.id,
+                        req.questionId,
+                    ).then(async (data) => {
+                        if (data.length === 0) {
+                            return res.status(400).json({
+                                error: true,
+                                msg: 'Bạn chưa làm bài',
+                            });
+                        } else {
+                            let question = questions[0];
+                            question.answers = [];
+                            await ChoiceService.getChoicesByQuestionId(
+                                question.id,
+                            ).then((choices) => {
+                                if (choices.length === 0) {
+                                    let empA = 'Không có câu trả lời';
+                                    question.answers.push(empA);
+                                } else {
+                                    question.answers = [...choices];
+                                }
+                            });
+                            await ChoiceService.getCorrectAnswer(
+                                req.questionId,
+                            ).then((data) => {
+                                if (data.length === 0) {
+                                    let correctAnswer =
+                                        'Không có câu trả lời đúng';
+                                    question.correctAnswer = correctAnswer;
+                                } else {
+                                    question.correctAnswer = [...data];
+                                }
+                            });
+                            question.yourAnswer = [...data];
+                            return res.status(200).json({
+                                error: false,
+                                question,
+                            });
+                        }
+                    });
+                },
+            );
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Server error');
+        }
+    }
 };

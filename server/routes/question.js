@@ -14,16 +14,16 @@ const { questionPassport } = require('../middleware/passport');
 // @route api/course/:courseId/topic/:topicId/quiz/:quizId/question/:questionId/choice
 router.use(
     '/:questionId/choice',
-    questionQuizAuth,
     questionPassport,
+    questionQuizAuth,
     require('./choice'),
 );
 
 // @route api/course/:courseId/topic/:topicId/quiz/:quizId/question/:questionId/userquestion
 router.use(
     '/:questionId/userquestion',
-    questionQuizAuth,
     questionPassport,
+    questionQuizAuth,
     require('./userquestion'),
 );
 // @route   POST api/course/:courseId/topic/:topicId/quiz/:quizId/question/create

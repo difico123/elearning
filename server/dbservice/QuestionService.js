@@ -94,8 +94,8 @@ module.exports = class QuestionService {
                     'join quizes qui on qui.id = qu.quiz ' +
                     'where u.role = 0 and qui.id = ? ' +
                     'group by uq.user ' +
-                    'order by marks desc ' +
-                    'limit 5 ' ;
+                    'order by score desc ' +
+                    'limit 5 ';
 
                 pool.query(query, [quizId], (err, result) => {
                     if (err) reject(new Error(err.message));

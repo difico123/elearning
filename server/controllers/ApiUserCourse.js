@@ -19,9 +19,9 @@ module.exports = class ApiCourse {
                     course.instructor === studentId ||
                     course.verified === 0
                 ) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Bạn không thể đăng kí khoá học này' });
+                    return res.status(400).json({
+                        error: 'Bạn không thể đăng kí khoá học này',
+                    });
                 }
                 // student can enroll course but studen enrolled this course will not enroll again
                 let userCourse = {
@@ -31,9 +31,9 @@ module.exports = class ApiCourse {
                 UserCourseService.add(userCourse).then((added) => {
                     //duplication error
                     if (!added) {
-                        return res
-                            .status(400)
-                            .json({ error: 'Bạn đã đăng kí khoá học rồi' });
+                        return res.status(400).json({
+                            error: 'Bạn đã đăng kí khoá học rồi',
+                        });
                     }
 
                     UserService.getUserInfoById(studentId).then(
@@ -63,12 +63,10 @@ module.exports = class ApiCourse {
                                         msg: 'chưa thông báo được đến thầy ',
                                     });
                                 }
-                                console.log(
-                                    'tin nhắn đã thông báo đến instructor',
-                                );
-                                return res
-                                    .status(200)
-                                    .send('Đăng kí khoá học thành công');
+                                return res.status(200).json({
+                                    error: false,
+                                    msg: 'tin nhắn đã thông báo đến instructor, Đăng kí khoá học thành công',
+                                });
                             });
                         },
                     );
@@ -87,9 +85,9 @@ module.exports = class ApiCourse {
         let rating = parseInt(req.body.rating);
 
         if (rating < 1 || rating > 5) {
-            return res
-                .status(400)
-                .json({ error: 'Bạn phải đánh giá khoá học từ 1 - 5' });
+            return res.status(400).json({
+                error: 'Bạn phải đánh giá khoá học từ 1 - 5',
+            });
         }
         let userCourse = {
             rating: req.body.rating,
@@ -99,9 +97,9 @@ module.exports = class ApiCourse {
         try {
             UserCourseService.update(userCourse).then((updated) => {
                 if (!updated) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Bạn chưa đánh giá khoá học' });
+                    return res.status(400).json({
+                        error: 'Bạn chưa đánh giá khoá học',
+                    });
                 }
                 res.status(200).send('Bạn đã đánh giá khoá học');
             });
@@ -119,9 +117,9 @@ module.exports = class ApiCourse {
             let { id } = req.user;
             UserCourseService.getUserCourseByUserId(id).then((data) => {
                 return data.length === 0
-                    ? res
-                          .status(400)
-                          .json({ error: 'Bạn chưa đăng kí khoá học nào' })
+                    ? res.status(400).json({
+                          error: 'Bạn chưa đăng kí khoá học nào',
+                      })
                     : res.status(200).json(data);
             });
         } catch (error) {
