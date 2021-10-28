@@ -14,12 +14,12 @@ router.delete('/deleteUser/:userId', auth, admin, ApiAdmin.deleteUser);
 // @access  Private
 router.delete('/deleteCourse/:courseId', auth, admin, ApiAdmin.deleteCourse);
 
-// @route   GET api/user/listUsers
+// @route   GET api/admin/listUsers
 // @desc    get users by admin
 // @access  Private
 router.get('/listUsers', auth, admin, ApiAdmin.listUsers);
 
-// @route   GET api/user/listCourses
+// @route   GET api/admin/listCourses
 // @desc    get listCourses by admin
 // @access  Private
 router.get('/listCourses', auth, admin, ApiAdmin.listCourses);
