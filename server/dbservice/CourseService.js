@@ -191,4 +191,22 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
+    static async getCourseInstructorByCourceId(courseId) {
+        try {
+            const respond = await new Promise((resolve, reject) => {
+                const query =
+                'select c.id as courseId, c.name as courseName, concat(u.firstName," ", u.middleName, " ", u.lastName) as instructorFullName ' +
+                'from courses c ' +
+                'join users u on u.id = c.instructor ' +
+                'WHERE c.id = ?';
+                pool.query(query, [courseId], (err, result) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(result);
+                });
+            });
+            return respond;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 };

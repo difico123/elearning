@@ -86,9 +86,10 @@ module.exports = class UserCourseService {
         try {
             const respond = await new Promise((resolve, reject) => {
                 const query =
-                    'select uc.id, uc.course as courseId,c.name as courseName, c.instructor as instructorId, ' +
-                    'u.lastName as instructorName,uc.user as userId, uc.isComplete, uc.marks, uc.dateAdded from user_courses uc ' +
-                    'join courses c on c.id = uc.course join users u on u.id = c.instructor where uc.course = ?';
+                'select uc.user as userId, uc.rating, uc.marks, concat(u.firstName," ", u.middleName," ",u.lastName) as student, ' +
+                'u.email, u.phoneNumber from user_courses uc ' +
+                'join users u on u.id = uc.user ' +
+                'where uc.course =1;';
                 pool.query(query, [courseId], (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
