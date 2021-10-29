@@ -8,6 +8,7 @@ const ApiCourse = require('../controllers/ApiCourse');
 const validateInput = require('../middleware/errors/validateInput');
 const upload = require('../utils/multer');
 const { coursePassport } = require('../middleware/passport');
+const { checkInputTitle } = require('../middleware/errors/checkInput');
 
 //@route api/course/:courseId/topic
 router.use('/:courseId/topic', coursePassport, require('./topic'));
@@ -18,10 +19,10 @@ router.use('/:courseId/topic', coursePassport, require('./topic'));
 router.post(
     '/create/:categoryId',
     upload.single('courseImage'),
-    [
-        check('name', 'Không được bỏ trống tên').not().isEmpty(),
-        check('des', 'Không được bỏ trống phần mô tả').not().isEmpty(),
-    ],
+    checkInputTitle('name', 'Tên khoá học', 5, 20),
+    check('des', 'Mô tả phải ít nhất 10 ký tự').isLength({
+        min: 10,
+    }),
     auth,
     instructorAuth,
     validateInput,
@@ -54,6 +55,11 @@ router.put(
 router.put(
     '/edit/:courseId',
     upload.single('courseImage'),
+    checkInputTitle('name', 'Tên khoá học', 5, 20),
+    check('des', 'Mô tả phải ít nhất 10 ký tự').isLength({
+        min: 10,
+    }),
+    validateInput,
     auth,
     courseInstructorAuth,
     ApiCourse.edit,

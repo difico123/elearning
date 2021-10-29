@@ -18,7 +18,8 @@ module.exports = class ApiUser {
             hasUser.then(async (data) => {
                 if (data[0]) {
                     return res.status(400).json({
-                        error: true,msg: 'Email này đã có người đăng kí',
+                        error: true,
+                        msg: 'Email này đã có người đăng kí',
                     });
                 }
 
@@ -49,7 +50,7 @@ module.exports = class ApiUser {
                     res.status(201).json({
                         error: false,
                         msg: 'Đăng kí tài khoản thành công',
-                        user
+                        user,
                     });
                 });
             });
@@ -118,7 +119,7 @@ module.exports = class ApiUser {
                                 .json({
                                     error: false,
                                     token,
-                                    user: data[0]
+                                    user: data[0],
                                 });
                         },
                     );
@@ -289,7 +290,7 @@ module.exports = class ApiUser {
             UserService.getUserInfoById(id).then((data) => {
                 res.json({
                     error: false,
-                    user:data[0],
+                    user: data[0],
                 });
             });
         } catch (error) {

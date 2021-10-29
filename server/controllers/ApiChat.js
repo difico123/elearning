@@ -22,7 +22,6 @@ module.exports = class ApiChat {
                 }
                 ChatService.getCourseChatUser(chat.user, chat.course).then(
                     (chattedCourse) => {
-                        
                         let firstDetailsMsg = `${chattedCourse[0].senderName} vừa mới nhắn tin trong khoá học ${chattedCourse[0].name} của`;
 
                         ChatService.getOtherChatUser(
@@ -58,7 +57,7 @@ module.exports = class ApiChat {
                                 return res.status(200).json({
                                     error: false,
                                     msg: 'Comment của bạn đã được gửi',
-                                    chat
+                                    chat,
                                 });
                             });
                         });
@@ -126,7 +125,8 @@ module.exports = class ApiChat {
             ).then((users) => {
                 if (users.length === 0) {
                     return res.status(200).json({
-                        error: false ,msg : 'Không có người trong cuộc nói chuyện',
+                        error: false,
+                        msg: 'Không có người trong cuộc nói chuyện',
                     });
                 }
                 res.status(200).json(users);

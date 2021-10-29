@@ -4,6 +4,7 @@ const { check } = require('express-validator');
 const validateInput = require('../middleware/errors/validateInput');
 const upload = require('../utils/multer');
 const ApiUser = require('../controllers/ApiUser');
+const { checkInputTitle } = require('../middleware/errors/checkInput');
 
 // @route   POST api/auth/register
 // @desc    Register user
@@ -12,7 +13,12 @@ router.post(
     '/register',
     upload.single('imageUrl'),
     [
-        check('lastName', 'Không được bỏ trống tên').not().isEmpty(),
+        checkInputTitle('lastName', 'Tên', 3, 10),
+        checkInputTitle('middleName', 'Tên đệm', 3, 10),
+        checkInputTitle('firstName', 'Họ', 3, 10),
+        checkInputTitle('phoneNumber', 'Số đIện thoại', 9, 12),
+        checkInputTitle('address', 'Địa chỉ', 5, 30),
+        checkInputTitle('city', 'Thành phố', 5, 30),
         check('email', 'Địa chỉ email không hợp lệ').isEmail(),
         check('password', 'Vui lòng điền mật khẩu nhiều hơn 6 kí tự')
             .custom((value) => !/\s/.test(value))

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
 const validateInput = require('../middleware/errors/validateInput');
+const { checkInputTitle } = require('../middleware/errors/checkInput');
 const ApiUser = require('../controllers/ApiUser');
 const auth = require('../middleware/auth/auth');
 const upload = require('../utils/multer');
@@ -17,7 +18,12 @@ router.get('/info', auth, ApiUser.getInfor);
 router.put(
     '/editInfo',
     upload.single('imageUrl'),
-    [check('lastName', 'Không được bỏ trống tên').not().isEmpty()],
+    checkInputTitle('lastName', 'Tên', 3, 10),
+    checkInputTitle('middleName', 'Tên đệm', 3, 10),
+    checkInputTitle('firstName', 'Họ', 3, 10),
+    checkInputTitle('phoneNumber', 'Số đIện thoại', 9, 12),
+    checkInputTitle('address', 'Địa chỉ', 5, 30),
+    checkInputTitle('city', 'Thành phố', 5, 30),
     auth,
     validateInput,
     ApiUser.editInfo,
@@ -39,18 +45,16 @@ router.get('/showAvt/:userId', ApiUser.showAvt);
 router.put(
     '/editPw',
     [
-        check(
-            'newPassword',
-            'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự',
-        ).isLength({
-            min: 6,
-        }),
-        check(
-            'password',
-            'Vui lòng điền mật khẩu xác nhận nhiều hơn 6 kí tự',
-        ).isLength({
-            min: 6,
-        }),
+        check('newPassword', 'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự')
+            .custom((value) => !/\s/.test(value))
+            .isLength({
+                min: 6,
+            }),
+        check('password', 'Vui lòng điền mật khẩu xác nhận nhiều hơn 6 kí tự')
+            .custom((value) => !/\s/.test(value))
+            .isLength({
+                min: 6,
+            }),
     ],
     auth,
     ApiUser.editPw,

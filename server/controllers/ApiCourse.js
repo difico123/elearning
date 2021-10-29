@@ -344,10 +344,12 @@ module.exports = class ApiCourse {
     // @access  private
     static async showUsers(req, res) {
         try {
-            let info = {}
-            await CourseService.getCourseInstructorByCourceId(req.params.courseId).then(instructorCourses=> {
+            let info = {};
+            await CourseService.getCourseInstructorByCourceId(
+                req.params.courseId,
+            ).then((instructorCourses) => {
                 info.course = instructorCourses[0];
-            })
+            });
             UserCourseService.getCourseUsers(req.params.courseId).then(
                 (data) => {
                     if (data.length == 0) {
