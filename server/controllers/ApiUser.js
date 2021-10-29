@@ -17,9 +17,9 @@ module.exports = class ApiUser {
 
             hasUser.then(async (data) => {
                 if (data[0]) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Email này đã có người đăng kí' });
+                    return res.status(400).json({
+                        error: 'Email này đã có người đăng kí',
+                    });
                 }
 
                 const salt = await bcrypt.genSalt(10);
@@ -66,9 +66,9 @@ module.exports = class ApiUser {
         UserService.getUserByEmail(email)
             .then(async (data) => {
                 if (!data[0]) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Email này chưa được đăng kí' });
+                    return res.status(400).json({
+                        error: 'Email này chưa được đăng kí',
+                    });
                 }
 
                 try {
@@ -151,9 +151,10 @@ module.exports = class ApiUser {
                 id: data[0].id,
             };
             if (!user) {
-                return res
-                    .status(400)
-                    .json({ error: true, msg: 'Email của bạn không đúng' });
+                return res.status(400).json({
+                    error: true,
+                    msg: 'Email của bạn không đúng',
+                });
             }
 
             // Generating Password Reset Token
@@ -166,14 +167,15 @@ module.exports = class ApiUser {
                 .digest('hex');
 
             let dat = new Date();
-            dat.setMinutes(dat.getMinutes() + 1);
+            dat.setMinutes(dat.getMinutes() + 5);
             user.resetPasswordExpire = dat;
 
             UserService.updateUserInfo(user).then(async (updated) => {
                 if (!updated) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'chưa cập nhật được token' });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'chưa cập nhật được token',
+                    });
                 }
                 // return res.status(200).json({error: false, user})
 
@@ -231,15 +233,17 @@ module.exports = class ApiUser {
         UserService.getUserByResetPasswordToken(resetPasswordToken).then(
             async (data) => {
                 if (!data[0]) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'token của bạn không đúng' });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'token của bạn không đúng',
+                    });
                 }
                 let dat = new Date();
                 if (data[0].resetPasswordExpire < dat) {
-                    return res
-                        .status(400)
-                        .json({ error: true, msg: 'token đã hết hạn' });
+                    return res.status(400).json({
+                        error: true,
+                        msg: 'token đã hết hạn',
+                    });
                 }
                 let user = {
                     id: data[0].id,

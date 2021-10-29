@@ -77,8 +77,9 @@ module.exports = class ApiChat {
             ChatService.getConversation(req.params.courseId).then(
                 (messages) => {
                     if (messages.length === 0) {
-                        return res.status(400).json({
-                            error: 'Không có cuộc nói chuyện nào',
+                        return res.status(200).json({
+                            error: false,
+                            msg: 'Không có cuộc nói chuyện nào',
                         });
                     }
                     res.status(200).json(messages);
@@ -98,8 +99,9 @@ module.exports = class ApiChat {
             ChatService.getOtherChatUser(req.user.id, req.params.courseId).then(
                 (users) => {
                     if (users.length === 0) {
-                        return res.status(400).json({
-                            error: 'Không có cuộc nói chuyện nào',
+                        return res.status(200).json({
+                            error: false,
+                            msg: 'Không có cuộc nói chuyện nào',
                         });
                     }
                     res.status(200).json(users);
@@ -121,8 +123,8 @@ module.exports = class ApiChat {
                 req.params.courseId,
             ).then((users) => {
                 if (users.length === 0) {
-                    return res.status(400).json({
-                        error: 'Không có cuộc nói chuyện nào',
+                    return res.status(200).json({
+                        error: false ,msg : 'Không có người trong cuộc nói chuyện',
                     });
                 }
                 res.status(200).json(users);

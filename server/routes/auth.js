@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {
-    check
-} = require('express-validator');
+const { check } = require('express-validator');
 const validateInput = require('../middleware/errors/validateInput');
 const upload = require('../utils/multer');
 const ApiUser = require('../controllers/ApiUser');
@@ -16,9 +14,11 @@ router.post(
     [
         check('lastName', 'Không được bỏ trống tên').not().isEmpty(),
         check('email', 'Địa chỉ email không hợp lệ').isEmail(),
-        check('password', 'Vui lòng điền mật khẩu nhiều hơn 6 kí tự').custom(value => !/\s/.test(value)).isLength({
-            min: 6,
-        }),
+        check('password', 'Vui lòng điền mật khẩu nhiều hơn 6 kí tự')
+            .custom((value) => !/\s/.test(value))
+            .isLength({
+                min: 6,
+            }),
     ],
     validateInput,
     ApiUser.register,
@@ -31,9 +31,11 @@ router.post(
     '/login',
     [
         check('email', 'Địa chỉ email không hợp lệ').isEmail(),
-        check('password', 'Vui lòng điền mật khẩu nhiều hơn 6 kí tự').custom(value => !/\s/.test(value)).isLength({
-            min: 6,
-        }),
+        check('password', 'Vui lòng điền mật khẩu nhiều hơn 6 kí tự')
+            .custom((value) => !/\s/.test(value))
+            .isLength({
+                min: 6,
+            }),
     ],
     validateInput,
     ApiUser.login,
@@ -60,18 +62,19 @@ router.post(
 router.post(
     '/resetPassword/:token',
     [
-        check(
-            'newPassword',
-            'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự',
-        ).custom(value => !/\s/.test(value)).isLength({
-            min: 6,
-        }),
+        check('newPassword', 'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự')
+            .custom((value) => !/\s/.test(value))
+            .isLength({
+                min: 6,
+            }),
         check(
             'confirmPassword',
             'Vui lòng điền mật khẩu xác nhận nhiều hơn 6 kí tự',
-        ).custom(value => !/\s/.test(value)).isLength({
-            min: 6,
-        }),
+        )
+            .custom((value) => !/\s/.test(value))
+            .isLength({
+                min: 6,
+            }),
     ],
     validateInput,
     ApiUser.resetPassword,

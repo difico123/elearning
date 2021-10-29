@@ -3,6 +3,7 @@ const UserCourseService = require('../dbservice/UserCourseService');
 const cloudinary = require('../config/cloud/cloudinary');
 const TopicService = require('../dbservice/TopicService');
 const CategoryService = require('../dbservice/CategoryService');
+const { pagination } = require('../utils/feature');
 
 module.exports = class ApiCourse {
     // @route   POST api/course/create
@@ -312,17 +313,24 @@ module.exports = class ApiCourse {
     // @desc    show all courses
     // @access  public
     static async showAll(req, res) {
+        let query = {
+            keyword: req.query.keyword,
+            rating: req.query.rating,
+        };
         try {
-            CourseService.getAll().then((data) => {
+            CourseService.getAll(query).then((data) => {
                 if (data.length == 0) {
                     return res.status(200).json({
                         error: false,
                         msg: 'Không có khoá học nào',
                     });
                 }
+                let courses = pagination(data, req.query.page);
                 res.status(200).json({
                     error: false,
-                    data,
+                    courses,
+                    filteredCourse: courses.length,
+                    currentPage: req.query.page,
                 });
             });
         } catch (error) {
@@ -339,14 +347,15 @@ module.exports = class ApiCourse {
             UserCourseService.getCourseUsers(req.params.courseId).then(
                 (data) => {
                     if (data.length == 0) {
-                        return res.status(400).json({
-                            error: true,
+                        return res.status(200).json({
+                            error: false,
                             msg: 'Không có học sinh nào trong khoá học',
                         });
                     }
                     res.status(200).json({
                         error: false,
                         data,
+                        total: data.length,
                     });
                 },
             );

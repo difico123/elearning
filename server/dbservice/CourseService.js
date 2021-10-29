@@ -106,9 +106,18 @@ module.exports = class CourseService {
             console.log(error);
         }
     }
-    static async getAll() {
+    static async getAll(query) {
+        let { keyword, rating } = query;
         try {
             const response = await new Promise((resolve, reject) => {
+                let nameQuery =
+                    keyword !== undefined
+                        ? `and c.name like "${keyword}%"`
+                        : '';
+                let ratingQuery =
+                    rating !== undefined
+                        ? ` having rating > " ${rating} "`
+                        : '';
                 const query =
                     'select c.id as courseId, c.name, c.des, ca.id as categoryId, ca.name as categoryName, ' +
                     'c.instructor as instructorId, concat(u.firstName," ", u.middleName," ", u.lastName) as instructorName, ' +
@@ -118,7 +127,9 @@ module.exports = class CourseService {
                     'left join user_courses uc on uc.course = c.id ' +
                     'left join users u on u.id = c.instructor ' +
                     'where c.verified = 1 ' +
-                    'group by c.id';
+                    nameQuery +
+                    'group by c.id' +
+                    ratingQuery;
                 pool.query(query, (err, result) => {
                     if (err) reject(new Error(err.message));
                     resolve(result);
