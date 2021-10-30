@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
 const validateInput = require('../middleware/errors/validateInput');
-const { checkInputTitle } = require('../middleware/errors/checkInput');
+const {
+    checkInputTitle,
+    checkAddressInput,
+} = require('../middleware/errors/checkInput');
 const ApiUser = require('../controllers/ApiUser');
 const auth = require('../middleware/auth/auth');
 const upload = require('../utils/multer');
@@ -18,12 +21,18 @@ router.get('/info', auth, ApiUser.getInfor);
 router.put(
     '/editInfo',
     upload.single('imageUrl'),
-    checkInputTitle('lastName', 'Tên', 3, 10),
-    checkInputTitle('middleName', 'Tên đệm', 3, 10),
-    checkInputTitle('firstName', 'Họ', 3, 10),
-    checkInputTitle('phoneNumber', 'Số đIện thoại', 9, 12),
-    checkInputTitle('address', 'Địa chỉ', 5, 30),
-    checkInputTitle('city', 'Thành phố', 5, 30),
+    checkInputTitle('lastName', 'Tên', 1, 10),
+    checkInputTitle('middleName', 'Tên đệm', 1, 10),
+    checkInputTitle('firstName', 'Họ', 1, 10),
+    check('phoneNumber', 'Số điện thoại phải chứa số, không có ký tự đặc biệt')
+        .custom((value) => /^\d+$/.test(value))
+        .isLength({
+            min: 6,
+            max: 10,
+        })
+        .withMessage('Số điện thoại phải chứa từ 6 - 10 ký tự'),
+    checkAddressInput('address', 'Tên địa chỉ', 1, 30),
+    checkAddressInput('city', 'Tên thành phố', 1, 20),
     auth,
     validateInput,
     ApiUser.editInfo,
