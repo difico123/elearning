@@ -7,7 +7,7 @@ module.exports = async function (req, res, next) {
         UserService.getUserInfoById(req.user.id).then((data) => {
             if (data[0].role !== 2 && data[0].role !== 1) {
                 return res.status(403).json({
-                    error: 'Instructor resources access denied',
+                    error: true,msg: 'Instructor resources access denied',
                 });
             }
             next();

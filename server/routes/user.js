@@ -64,6 +64,11 @@ router.put(
             .isLength({
                 min: 6,
             }),
+        check('"confirmPassword"', 'Vui lòng điền mật khẩu xác nhận nhiều hơn 6 kí tự')
+            .custom((value) => !/\s/.test(value))
+            .isLength({
+                min: 6,
+            }),
     ],
     auth,
     ApiUser.editPw,

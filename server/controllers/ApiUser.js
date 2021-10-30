@@ -69,7 +69,7 @@ module.exports = class ApiUser {
             .then(async (data) => {
                 if (!data[0]) {
                     return res.status(400).json({
-                        error: 'Email này chưa được đăng kí',
+                        error: true, msg:'Email này chưa được đăng kí',
                     });
                 }
 
@@ -80,7 +80,7 @@ module.exports = class ApiUser {
                         data[0].password,
                     );
                     if (!isMatch) {
-                        return res.status(404).json({
+                        return res.status(400).json({
                             error: true,
                             msg: 'Mật khẩu của bạn không chính xác',
                         });
@@ -150,15 +150,15 @@ module.exports = class ApiUser {
         let { email } = req.body;
 
         UserService.getUserByEmail(email).then((data) => {
-            let user = {
-                id: data[0].id,
-            };
-            if (!user) {
+            if (data.length === 0) {
                 return res.status(400).json({
                     error: true,
                     msg: 'Email của bạn không đúng',
                 });
             }
+            let user = {
+                id: data[0].id,
+            };
 
             // Generating Password Reset Token
             const resetToken = crypto.randomBytes(20).toString('hex');
@@ -426,7 +426,7 @@ module.exports = class ApiUser {
             //get user information by id
             let { id } = req.user;
 
-            let password = req.body.password;
+            let {password,confirmPassword,newPassword} = req.body;
             UserService.getUserInfoById(id).then(async (data) => {
                 const isMatch = await bcrypt.compare(
                     password,
@@ -438,10 +438,16 @@ module.exports = class ApiUser {
                         msg: 'Mật khẩu của bạn không chính xác',
                     });
                 }
+                if(confirmPassword !== newPassword) {
+                    return res.status(404).json({
+                        error: true,
+                        msg:'Mật khẩu xác nhận không khớp',
+                    });
+                }
                 const salt = await bcrypt.genSalt(10);
                 let user = {
                     id: id,
-                    password: req.body.newPassword,
+                    password: newPassword,
                 };
                 user.password = await bcrypt.hash(user.password, salt);
                 UserService.updateUserInfo(user).then((updated) => {

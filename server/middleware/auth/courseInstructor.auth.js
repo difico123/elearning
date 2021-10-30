@@ -13,7 +13,7 @@ module.exports = async function (req, res, next) {
             (instructorCourse) => {
                 return !instructorCourse[0]
                     ? res.status(403).json({
-                          error: 'Course instructor resources access denied',
+                          error: true,msg: 'Course instructor resources access denied',
                       })
                     : next();
             },

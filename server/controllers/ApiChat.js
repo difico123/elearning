@@ -83,7 +83,7 @@ module.exports = class ApiChat {
                             msg: 'Không có cuộc nói chuyện nào',
                         });
                     }
-                    res.status(200).json(messages);
+                    res.status(200).json({error: false, msg: messages, numOfMsg: messages.length});
                 },
             );
         } catch (error) {
