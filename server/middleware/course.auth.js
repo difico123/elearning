@@ -69,7 +69,7 @@ module.exports = {
                     if (data.length === 0) {
                         return res.status(403).json({
                             error: true,
-                            msg: 'Question không nằm trong khoá quiz',
+                            msg: 'Question không nằm trong quiz',
                         });
                     }
 

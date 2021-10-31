@@ -35,6 +35,13 @@ router.post(
         check('content', 'Nội dung phải nhiều hơn 6 ký tự').isLength({
             min: 6,
         }),
+        check('marks')
+            .custom((value) => /^\d+$/.test(value))
+            .withMessage('Điểm phải chứa ký tự số')
+            .isLength({
+                min: 1,
+            })
+            .withMessage('Điểm phải chứa từ 6 - 10 ký tự'),
     ],
     validateInput,
     auth,

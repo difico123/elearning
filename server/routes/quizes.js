@@ -26,7 +26,6 @@ router.use(
 router.post(
     '/create',
     [
-        check('shown', 'Không được bỏ trống xác thực').not().isEmpty(),
         check('title', 'Tiêu đề phải nhiều hơn 6 ký tự').isLength({
             min: 6,
         }),

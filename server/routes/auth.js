@@ -50,11 +50,13 @@ router.post(
     '/login',
     [
         check('email', 'Địa chỉ email không hợp lệ').isEmail(),
-        check('password', 'Vui lòng điền mật khẩu nhiều hơn 6 kí tự')
+        check('password')
             .custom((value) => !/\s/.test(value))
+            .withMessage('Mật khẩu không được chứa khoảng trắng')
             .isLength({
                 min: 6,
-            }),
+            })
+            .withMessage('Mật khẩu dài ít nhất 6 ký tự'),
     ],
     validateInput,
     ApiUser.login,

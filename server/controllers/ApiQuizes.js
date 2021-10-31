@@ -8,13 +8,12 @@ module.exports = class ApiQuizes {
     // @desc    create quizes by instructor
     // @access  Private
     static async createQuiz(req, res) {
-        const quize = {
-            title: req.body.title,
-            shown: req.body.shown,
+        const quiz = {
             topic: req.topicId,
+            title: req.body.title,
         };
         try {
-            QuizService.createQuiz(quize).then((created) => {
+            QuizService.createQuiz(quiz).then((created) => {
                 if (!created) {
                     return res.status(400).json({
                         error: true,
@@ -25,6 +24,7 @@ module.exports = class ApiQuizes {
                 return res.status(200).json({
                     error: false,
                     msg: 'tạo quiz thành công',
+                    quiz,
                 });
             });
         } catch (error) {
@@ -47,7 +47,7 @@ module.exports = class ApiQuizes {
                 }
                 res.status(200).json({
                     error: false,
-                    data,
+                    quizes: data,
                 });
             });
         } catch (error) {

@@ -54,14 +54,13 @@ router.get('/showAvt/:userId', ApiUser.showAvt);
 router.put(
     '/editPw',
     auth,
-    check(
-        'password',
-        'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự và không chứa khoảng trắng',
-    )
+    check('password')
         .custom((value) => !/\s/.test(value))
+        .withMessage('Mật khẩu cũ không được chứa khoảng trắng')
         .isLength({
             min: 6,
-        }),
+        })
+        .withMessage('Mật khẩu cũ phải dài hơn 6 kí tự'),
     validateInput,
     ApiUser.checkCorrectPassword,
     [
@@ -75,11 +74,11 @@ router.put(
 
         check('confirmPassword')
             .custom((value) => !/\s/.test(value))
-            .withMessage('Mật khẩu mới không được chứa khoảng trắng')
+            .withMessage('Mật khẩu xác nhận không được chứa khoảng trắng')
             .isLength({
                 min: 6,
             })
-            .withMessage('Mật khẩu mới phải dài hơn 6 kí tự'),
+            .withMessage('Mật khẩu xác nhận phải dài hơn 6 kí tự'),
     ],
     validateInput,
     ApiUser.editPw,

@@ -418,6 +418,7 @@ module.exports = class ApiUser {
             res.status(500).send('Server error');
         }
     }
+
     static async checkCorrectPassword(req, res, next) {
         let { id } = req.user;
 
@@ -445,18 +446,6 @@ module.exports = class ApiUser {
             let { id } = req.user;
 
             let { confirmPassword, newPassword } = req.body;
-
-            // UserService.getUserInfoById(id).then(async (data) => {
-            //     const isMatch = await bcrypt.compare(
-            //         password,
-            //         data[0].password,
-            //     );
-            //     if (!isMatch) {
-            //         return res.status(404).json({
-            //             error: true,
-            //             msg: 'Mật khẩu của bạn không chính xác',
-            //         });
-            //     }
             if (confirmPassword !== newPassword) {
                 return res.status(404).json({
                     error: true,
@@ -480,7 +469,6 @@ module.exports = class ApiUser {
                           msg: 'Mật khẩu chưa được cập nhật',
                       });
             });
-            // });
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');

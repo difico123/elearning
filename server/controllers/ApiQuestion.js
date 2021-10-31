@@ -24,6 +24,7 @@ module.exports = class ApiQuestion {
                 return res.status(200).json({
                     error: false,
                     msg: 'tạo câu hỏi thành công',
+                    question,
                 });
             });
         } catch (error) {
@@ -46,7 +47,7 @@ module.exports = class ApiQuestion {
                 }
                 res.status(200).json({
                     error: false,
-                    data,
+                    questions: data,
                 });
             });
         } catch (error) {

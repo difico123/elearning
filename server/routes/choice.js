@@ -13,9 +13,15 @@ const validateInput = require('../middleware/errors/validateInput');
 Router.post(
     '/create',
     [
-        check('content', 'Nội dung phải nhiều hơn 6 ký tự').isLength({
+        check('content', 'Nội dung phải nhiều hơn 1 ký tự').isLength({
             min: 6,
         }),
+        check('isAnswer', 'Đáp án chỉ đúng khi là 1, sai khi là 0')
+            .isLength({
+                min: 1,
+                max: 1,
+            })
+            .custom((value) => /[0-1]/.test(value)),
     ],
     validateInput,
     auth,

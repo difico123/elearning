@@ -8,9 +8,9 @@ module.exports = class ApiChoice {
     // @access  Private
     static async createChoice(req, res) {
         const choice = {
+            question: req.questionId,
             content: req.body.content,
             isAnswer: req.body.isAnswer,
-            question: req.questionId,
         };
 
         try {
@@ -25,6 +25,7 @@ module.exports = class ApiChoice {
                 return res.status(200).json({
                     error: false,
                     msg: 'tạo câu trả lời thành công',
+                    choices: choice,
                 });
             });
         } catch (error) {
@@ -48,7 +49,7 @@ module.exports = class ApiChoice {
                     }
                     res.status(200).json({
                         error: false,
-                        data,
+                        choices: data,
                     });
                 },
             );
