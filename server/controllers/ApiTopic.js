@@ -8,10 +8,10 @@ module.exports = class ApiTopic {
     // @access  Private
     static async createTopic(req, res) {
         const topic = {
+            course: req.courseId,
             indexOrder: req.body.indexOrder,
             title: req.body.title,
             content: req.body.content,
-            course: req.courseId,
         };
         try {
             TopicService.addTopic(topic).then((created) => {
@@ -45,6 +45,7 @@ module.exports = class ApiTopic {
                     return res.status(200).json({
                         error: false,
                         msg: 'Tạo topic thành công',
+                        topic,
                     });
                 });
             });
@@ -61,14 +62,14 @@ module.exports = class ApiTopic {
         try {
             TopicService.getCourseTopics(req.courseId).then((data) => {
                 if (data.length == 0) {
-                    return res.status(400).json({
+                    return res.status(200).json({
                         error: true,
                         msg: 'Bạn chưa có topic nào',
                     });
                 }
                 res.status(200).json({
-                    error: true,
-                    data,
+                    error: false,
+                    topics: data,
                 });
             });
         } catch (error) {
@@ -82,7 +83,6 @@ module.exports = class ApiTopic {
     static async editTopic(req, res) {
         let topic = {
             id: req.params.topicId,
-            indexOrder: req.body.indexOrder,
             title: req.body.title,
             content: req.body.content,
         };
@@ -95,8 +95,9 @@ module.exports = class ApiTopic {
                     });
                 }
                 res.status(200).json({
-                    error: true,
+                    error: false,
                     msg: 'cập nhật topic thành công',
+                    topic,
                 });
             });
         } catch (error) {

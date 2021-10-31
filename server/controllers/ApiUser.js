@@ -69,7 +69,8 @@ module.exports = class ApiUser {
             .then(async (data) => {
                 if (!data[0]) {
                     return res.status(400).json({
-                        error: true, msg:'Email này chưa được đăng kí',
+                        error: true,
+                        msg: 'Email này chưa được đăng kí',
                     });
                 }
 
@@ -417,6 +418,23 @@ module.exports = class ApiUser {
             res.status(500).send('Server error');
         }
     }
+    static async checkCorrectPassword(req, res, next) {
+        let { id } = req.user;
+
+        let { password } = req.body;
+
+        UserService.getUserInfoById(id).then(async (data) => {
+            const isMatch = await bcrypt.compare(password, data[0].password);
+            if (!isMatch) {
+                return res.status(404).json({
+                    error: true,
+                    msg: 'Mật khẩu của bạn không chính xác',
+                });
+            } else {
+                next();
+            }
+        });
+    }
 
     // @route   PUT api/user/editPw
     // @desc    edit user password
@@ -426,42 +444,43 @@ module.exports = class ApiUser {
             //get user information by id
             let { id } = req.user;
 
-            let {password,confirmPassword,newPassword} = req.body;
-            UserService.getUserInfoById(id).then(async (data) => {
-                const isMatch = await bcrypt.compare(
-                    password,
-                    data[0].password,
-                );
-                if (!isMatch) {
-                    return res.status(404).json({
-                        error: true,
-                        msg: 'Mật khẩu của bạn không chính xác',
-                    });
-                }
-                if(confirmPassword !== newPassword) {
-                    return res.status(404).json({
-                        error: true,
-                        msg:'Mật khẩu xác nhận không khớp',
-                    });
-                }
-                const salt = await bcrypt.genSalt(10);
-                let user = {
-                    id: id,
-                    password: newPassword,
-                };
-                user.password = await bcrypt.hash(user.password, salt);
-                UserService.updateUserInfo(user).then((updated) => {
-                    return updated
-                        ? res.status(200).json({
-                              error: false,
-                              msg: 'Mật khẩu của bạn đã được cập nhật',
-                          })
-                        : res.status(400).json({
-                              error: true,
-                              msg: 'Mật khẩu chưa được cập nhật',
-                          });
+            let { confirmPassword, newPassword } = req.body;
+
+            // UserService.getUserInfoById(id).then(async (data) => {
+            //     const isMatch = await bcrypt.compare(
+            //         password,
+            //         data[0].password,
+            //     );
+            //     if (!isMatch) {
+            //         return res.status(404).json({
+            //             error: true,
+            //             msg: 'Mật khẩu của bạn không chính xác',
+            //         });
+            //     }
+            if (confirmPassword !== newPassword) {
+                return res.status(404).json({
+                    error: true,
+                    msg: 'Mật khẩu xác nhận không khớp',
                 });
+            }
+            const salt = await bcrypt.genSalt(10);
+            let user = {
+                id: id,
+                password: newPassword,
+            };
+            user.password = await bcrypt.hash(user.password, salt);
+            UserService.updateUserInfo(user).then((updated) => {
+                return updated
+                    ? res.status(200).json({
+                          error: false,
+                          msg: 'Mật khẩu của bạn đã được cập nhật',
+                      })
+                    : res.status(400).json({
+                          error: true,
+                          msg: 'Mật khẩu chưa được cập nhật',
+                      });
             });
+            // });
         } catch (error) {
             console.log(error.message);
             res.status(500).send('Server error');

@@ -53,24 +53,35 @@ router.get('/showAvt/:userId', ApiUser.showAvt);
 // @access  private
 router.put(
     '/editPw',
-    [
-        check('newPassword', 'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự')
-            .custom((value) => !/\s/.test(value))
-            .isLength({
-                min: 6,
-            }),
-        check('password', 'Vui lòng điền mật khẩu xác nhận nhiều hơn 6 kí tự')
-            .custom((value) => !/\s/.test(value))
-            .isLength({
-                min: 6,
-            }),
-        check('"confirmPassword"', 'Vui lòng điền mật khẩu xác nhận nhiều hơn 6 kí tự')
-            .custom((value) => !/\s/.test(value))
-            .isLength({
-                min: 6,
-            }),
-    ],
     auth,
+    check(
+        'password',
+        'Vui lòng điền mật khẩu mới nhiều hơn 6 kí tự và không chứa khoảng trắng',
+    )
+        .custom((value) => !/\s/.test(value))
+        .isLength({
+            min: 6,
+        }),
+    validateInput,
+    ApiUser.checkCorrectPassword,
+    [
+        check('newPassword')
+            .custom((value) => !/\s/.test(value))
+            .withMessage('Mật khẩu mới không được chứa khoảng trắng')
+            .isLength({
+                min: 6,
+            })
+            .withMessage('Mật khẩu mới phải dài hơn 6 kí tự'),
+
+        check('confirmPassword')
+            .custom((value) => !/\s/.test(value))
+            .withMessage('Mật khẩu mới không được chứa khoảng trắng')
+            .isLength({
+                min: 6,
+            })
+            .withMessage('Mật khẩu mới phải dài hơn 6 kí tự'),
+    ],
+    validateInput,
     ApiUser.editPw,
 );
 

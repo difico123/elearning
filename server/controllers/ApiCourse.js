@@ -238,7 +238,7 @@ module.exports = class ApiCourse {
                 }
                 res.status(200).json({
                     error: false,
-                    data,
+                    courses: data,
                 });
             });
         } catch (error) {

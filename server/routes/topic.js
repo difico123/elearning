@@ -26,7 +26,6 @@ router.use(
 router.post(
     '/create',
     [
-        check('indexOrder', 'Không được bỏ trống thứ tự').not().isEmpty(),
         check('title', 'Tiêu đề phải nhiều hơn 6 ký tự').isLength({
             min: 6,
         }),
@@ -52,7 +51,6 @@ router.get('/getCourseTopics', auth, userCourseAuth, ApiTopic.getCourseTopics);
 router.put(
     '/edit/:topicId',
     [
-        check('indexOrder', 'Không được bỏ trống thứ tự').not().isEmpty(),
         check('title', 'Tiêu đề phải nhiều hơn 6 ký tự').isLength({
             min: 6,
         }),
@@ -61,10 +59,11 @@ router.put(
         }),
     ],
     validateInput,
-    topicCourseAuth,
     auth,
     instructorAuth,
     courseInstructorAuth,
+    topicPassport,
+    topicCourseAuth,
     ApiTopic.editTopic,
 );
 
@@ -87,10 +86,11 @@ router.put(
 // @access  Private
 router.delete(
     '/delete/:topicId',
-    topicCourseAuth,
     auth,
     instructorAuth,
     courseInstructorAuth,
+    topicPassport,
+    topicCourseAuth,
     ApiTopic.deleteTopic,
 );
 

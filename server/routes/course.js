@@ -19,7 +19,7 @@ router.use('/:courseId/topic', coursePassport, require('./topic'));
 router.post(
     '/create/:categoryId',
     upload.single('courseImage'),
-    checkInputTitle('name', 'Tên khoá học', 5, 20),
+    check('name', 'Tên khoá học không được bỏ trống').not().isEmpty(),
     check('des', 'Mô tả phải ít nhất 10 ký tự').isLength({
         min: 10,
     }),

@@ -8,11 +8,16 @@ module.exports = class ApiNotification {
         try {
             NotificationService.getNotification(req.user.id).then((data) => {
                 if (data.length == 0) {
-                    return res
-                        .status(400)
-                        .json({ error: 'Bạn không có thông báo nào' });
+                    return res.status(200).json({
+                        error: false,
+                        msg: 'Bạn không có thông báo nào',
+                    });
                 }
-                res.status(200).json(data);
+                res.status(200).json({
+                    error: false,
+                    notification: data,
+                    numOfNotifications: data.length,
+                });
             });
         } catch (error) {
             console.log(error.message);

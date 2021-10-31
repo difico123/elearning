@@ -10,7 +10,7 @@ module.exports = {
 
         CategoryService.checkCourseCategory(categoryId).then((categories) => {
             if (categories.length === 0) {
-                return res.status(403).json({
+                return res.status(404).json({
                     error: true,
                     msg: 'Không có loại khoá học',
                 });
@@ -26,7 +26,7 @@ module.exports = {
 
         CourseService.getCourseById(courseId).then((courses) => {
             if (courses.length === 0) {
-                return res.status(403).json({
+                return res.status(404).json({
                     error: true,
                     msg: 'Không có khoá học',
                 });
@@ -41,7 +41,7 @@ module.exports = {
         let topicId = req.params.topicId;
         TopicService.getCourseTopicById(topicId).then((topics) => {
             if (topics.length === 0) {
-                return res.status(403).json({
+                return res.status(404).json({
                     error: true,
                     msg: 'Không có Topic',
                 });
@@ -56,7 +56,7 @@ module.exports = {
         let quizId = req.params.quizId;
         QuizService.getQuizById(quizId).then((quizes) => {
             if (quizes.length === 0) {
-                return res.status(403).json({
+                return res.status(404).json({
                     error: true,
                     msg: 'Không có Quiz',
                 });
@@ -72,7 +72,7 @@ module.exports = {
         QuestionService.getQuestionByQuestionId(questionId).then(
             (questions) => {
                 if (questions.length === 0) {
-                    return res.status(403).json({
+                    return res.status(404).json({
                         error: true,
                         msg: 'Không có câu hỏi',
                     });
